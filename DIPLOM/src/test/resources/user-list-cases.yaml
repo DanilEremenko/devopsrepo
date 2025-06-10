@@ -1,0 +1,40 @@
+- request:
+    role: SPECIALIST
+    sortBy: lastname
+    orderSort: asc
+    pageNumber: 1
+    countPerPage: 30
+  valid: true
+  comment: валидный запрос
+- request:
+    role: SPECIALIST
+    sortBy: firstname
+    orderSort: asc
+    pageNumber: 1
+    countPerPage: 30
+  valid: false
+  comment: невалидный запрос, некорректное значение параметра сортировки
+- request:
+    role: SPECIALIST
+    sortBy: lastname
+    orderSort: as
+    pageNumber: 1
+    countPerPage: 30
+  valid: false
+  comment: невалидный запрос, некорректное значение направления сортировки
+- request:
+    role: SPECIALIST
+    sortBy: lastname
+    orderSort: asс
+    pageNumber: 0
+    countPerPage: 30
+  valid: false
+  comment: невалидный запрос, некорректное значение страницы
+- request:
+    role: SPECIALIST
+    sortBy: lastname
+    orderSort: asс
+    pageNumber: 1
+    countPerPage: 0
+  valid: false
+  comment: невалидный запрос, некорректное значение количества записей

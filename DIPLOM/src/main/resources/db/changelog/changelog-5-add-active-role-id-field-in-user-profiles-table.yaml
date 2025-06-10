@@ -1,0 +1,17 @@
+databaseChangeLog:
+  - changeSet:
+      id: add-active-role-id-field-in-user-profile-table
+      author: Danil Eremenko
+      changes:
+        - addColumn:
+            tableName: user_profiles
+            columns:
+              - column:
+                  name: active_role_id
+                  type: UUID
+        - addForeignKeyConstraint:
+            baseTableName: user_profiles
+            baseColumnNames: active_role_id
+            referencedTableName: user_roles
+            referencedColumnNames: id
+            constraintName: fk_user_profiles_user_roles

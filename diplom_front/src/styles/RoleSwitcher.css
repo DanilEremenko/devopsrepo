@@ -1,0 +1,14 @@
+.role-switcher {
+    display: flex;
+    gap: 10px;
+}
+
+.role-item {
+    cursor: pointer;
+}
+
+.role-icon {
+    width: 32px;
+    height: 32px;
+    transition: opacity 0.2s ease-in-out;
+}

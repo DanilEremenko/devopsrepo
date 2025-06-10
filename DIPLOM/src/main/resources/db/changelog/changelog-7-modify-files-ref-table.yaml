@@ -1,0 +1,9 @@
+databaseChangeLog:
+  - changeSet:
+      id: 3-modify-files-ref-table
+      author: Danil Eremenko
+      changes:
+        - renameColumn:
+            tableName: files_ref
+            oldColumnName: path
+            newColumnName: file_name

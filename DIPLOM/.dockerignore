@@ -1,0 +1,26 @@
+# Системное и IDE
+.idea/
+.vscode/
+*.iml
+
+# Git
+.git
+.gitignore
+
+# Операционная система
+.DS_Store
+Thumbs.db
+
+# Gradle кеш и выходные артефакты
+.gradle/
+build/
+out/
+
+# JAR-файлы и другие артефакты
+*.jar
+*.war
+*.class
+
+# Тестовые репорты и логи
+test-output/
+*.log

@@ -1,0 +1,43 @@
+.small-footer {
+    height: 40px;
+    padding: 0;
+    background-color: transparent;
+    width: 100%;
+}
+
+.footer-left {
+    height: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding-left: 12px;
+}
+
+.footer-year,
+.footer-copy {
+    font-family: 'Roboto', sans-serif;
+    font-weight: 400;
+    font-size: 10px;
+    line-height: 11px;
+    color: #96A6BA;
+}
+
+.footer-logo {
+    width: 36px;
+    height: 26px;
+    object-fit: contain;
+    filter: brightness(0) saturate(100%) invert(60%) sepia(4%) saturate(508%) hue-rotate(176deg) brightness(93%) contrast(86%);
+    margin-right: 12px;
+}
+
+@media (min-width: 1600px) {
+    .footer-year,
+    .footer-copy {
+        font-size: 12px;
+    }
+
+    .footer-logo {
+        width: 42px;
+        height: auto;
+    }
+}

@@ -1,0 +1,8 @@
+### Получение списка пользователей
+GET http://{{host}}:{{port}}/api/v1/users/?pageNumber=1&countPerPage=10&sortBy=activeStatus&orderSort=asc
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+### Блокировка/разблокировка пользователя
+POST http://{{host}}:{{port}}/api/v1/users/2/block/
+Authorization: Bearer {{authToken}}

@@ -1,0 +1,75 @@
+---
+- registrationRq: null
+  valid: false
+  comment: Пустой запрос не является валидным
+- registrationRq:
+    email: "ws4@mail.ru"
+    password: "Admin123456!"
+    firstName: "Test"
+    lastName: "Test"
+    middleName: "Test"
+    company:
+      companyTitle: "WS"
+      inn: "000000000004"
+  valid: true
+  comment: Все поля заполнены в соответствии с требованиями, запрос валидный
+- registrationRq:
+    email: "ws4@mail.ru"
+    password: "Admin123456!"
+    firstName: "Test"
+    lastName: "Test"
+    company:
+      companyTitle: "WS"
+      inn: "000000000004"
+  valid: true
+  comment: Все поля заполнены в соответствии с требованиями, поле middleName не является обязательным, запрос валидный
+- registrationRq:
+    email: "test"
+    password: "Admin123456!"
+    firstName: "Test"
+    lastName: "Test"
+    middleName: "Test"
+    company:
+      companyTitle: "WS"
+      inn: "000000000004"
+  valid: false
+  comment: Email указан некорректно, запрос невалидный
+- registrationRq:
+    email: "ws4@mail.ru"
+    password: "test"
+    firstName: "Test"
+    lastName: "Test"
+    middleName: "Test"
+    company:
+      companyTitle: "WS"
+      inn: "000000000004"
+  valid: false
+  comment: Password указан некорректно, запрос невалидный
+- registrationRq:
+    email: "ws4@mail.ru"
+    password: "Admin123456!"
+    firstName: "Test"
+    middleName: "Test"
+    company:
+      companyTitle: "WS"
+      inn: "000000000004"
+  valid: false
+  comment: Отсутствует одно из обязательных полей lastName, запрос не валидный
+- registrationRq:
+    email: "ws4@mail.ru"
+    password: "Admin123456!"
+    firstName: "Test"
+    lastName: "Test"
+    middleName: "Test"
+  valid: false
+  comment: Данные о компании не заполнены, запрос невалидный
+- registrationRq:
+    email: "ws4@mail.ru"
+    password: "Admin123456!"
+    firstName: "Test"
+    lastName: "Test"
+    middleName: "Test"
+    company:
+      companyTitle: "WS"
+  valid: false
+  comment: Отсутствует одно из обязательных полей company/inn, запрос не валидный

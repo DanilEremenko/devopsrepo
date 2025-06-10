@@ -1,0 +1,19 @@
+---
+- userId: 64f05f54-d38b-466e-af8d-c9f419b00b70
+  request:
+    page: 0
+    count: 30
+  valid: false
+  comment: Невалидный объект - некорректный номер страницы
+- userId: 64f05f54-d38b-466e-af8d-c9f419b00b70
+  request:
+    page: 1
+    count: 0
+  valid: false
+  comment: Невалидный объект - некорректное количество записей
+- userId: 64f05f54-d38b-466e-af8d-c9f419b00b70
+  request:
+    page: 1
+    count: 30
+  valid: true
+  comment: Валидный объект

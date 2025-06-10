@@ -1,0 +1,13 @@
+databaseChangeLog:
+  - changeSet:
+      id: add-file-specification-field-in-file-ref-table
+      author: Danil Eremenko
+      changes:
+        - addColumn:
+            tableName: files_ref
+            columns:
+              - column:
+                  name: file_specification
+                  type: varchar
+                  constraints:
+                    nullable: false

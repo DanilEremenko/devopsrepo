@@ -1,0 +1,75 @@
+### Сценарии использования для работы с загрузкой и получением файлов
+
+### Подготовительная часть
+
+### Регистрация нового пользователя
+POST http://{{host}}:{{port}}/api/v1/auth/register/
+Content-Type: application/json
+
+{
+  "email": "methodologist@mail.ru",
+  "password": "Admin123456!",
+  "firstName": "Methodologist",
+  "lastName": "Methodologist",
+  "company": {
+    "companyTitle": "Company",
+    "inn": "100000000001"
+  }
+}
+
+### Аутентификация зарегистрированного пользователя
+POST http://{{host}}:{{port}}/api/v1/auth/login/
+Content-Type: application/json
+
+{
+  "login": "methodologist@mail.ru",
+  "password": "Admin123456!"
+}
+
+### Кейс №1 - Успешная загрузка файла
+
+### Пользователь успешно загружает файл и получает его по запросу
+
+### Авторизированный пользователь загружает файл
+POST http://{{host}}:{{port}}/api/v1/files/
+Content-Type: multipart/form-data; boundary=WebAppBoundary
+Authorization: Bearer {{authToken}}
+
+--WebAppBoundary
+Content-Disposition: form-data; name="file"; filename="vasa.jpeg"
+Content-Type: image/jpeg
+
+< ./image1.jpeg
+--WebAppBoundary--
+
+###Получение ссылки на фото после его загрузки
+GET http://{{host}}:{{port}}/api/v1/files/{{pathForPhoto}}/
+Accept: application/json
+Authorization: Bearer {{authToken}}
+
+### Кейс №2 - Загрузка файла с превышением допустимого размера
+
+### Пользователь не может загрузить файл с превышением допустимого размера, при попытке загрузки система вернет
+### ошибку с кодом 413
+
+### Загрузка файла пользователем
+POST http://{{host}}:{{port}}/api/v1/files/
+Content-Type: multipart/form-data; boundary=WebAppBoundary
+Authorization: Bearer {{authToken}}
+
+--WebAppBoundary
+Content-Disposition: form-data; name="file"; filename="vasa.jpeg"
+Content-Type: image/jpeg
+
+< jetbrains-toolbox-2.4.2.32922.tar.gz
+--WebAppBoundary--
+
+### Кейс №3 - Получение файла по неверному идентификатору
+
+### Пользователь не может получить файл по идентификатору который остутствует в системе. При попытке получения файла,
+###система вернет ошибку с кодом 400
+
+### Получение ссылки на фото, 400 ответ
+GET http://{{host}}:{{port}}/api/v1/files/{{pathForPhoto}}/
+Accept: application/json
+Authorization: Bearer {{authToken}}

@@ -1,0 +1,13 @@
+### Добавление отзыва специалисту
+POST http://{{host}}:{{port}}/api/v1/feedback/1/
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+{
+  "message": "Новый отзыв"
+}
+
+### Получение всех отзывов о специалисте
+GET http://{{host}}:{{port}}/api/v1/feedback/1/?page=1&count=2
+Content-Type: application/json
+Authorization: Bearer {{authToken}}

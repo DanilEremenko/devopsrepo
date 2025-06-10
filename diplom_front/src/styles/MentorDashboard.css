@@ -1,0 +1,241 @@
+
+.mentor-content {
+    position: relative;
+    width: 100%;
+    height: 100%;
+}
+
+
+.mentor-title {
+    position: absolute;
+    top: 60px;
+    left: 100px;
+    width: 380px;
+    height: 38px;
+    font-family: 'Roboto', sans-serif;
+    font-weight: 500;
+    font-size: 32px;
+    line-height: 100%;
+    color: #313d4c;
+}
+
+
+.mentor-tabs {
+    position: absolute;
+    top: 210px;
+    left: 100px;
+    display: flex;
+    gap: 30px;
+}
+
+.tab-item {
+    font-family: 'Roboto', sans-serif;
+    font-weight: 500;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.tab-item.active {
+    color: #56b8ff;
+    text-decoration: underline;
+}
+
+.tab-item.inactive {
+    color: #313d4c;
+    text-decoration: none;
+}
+
+
+.mentor-table-container {
+    position: absolute;
+    top: 301px;
+    left: 100px;
+    width: 980px;
+    height: auto;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+
+.mentor-table {
+    box-shadow: 0px 1px 4px rgba(0, 0, 0, 0.25);
+    border-radius: 4px;
+    width: 100% !important;
+    height: auto !important;
+}
+
+.mentor-table .ant-table {
+    width: 100% !important;
+    height: auto !important;
+}
+
+
+.ant-table-column {
+    width: auto !important;
+}
+
+
+.pagination-container {
+    position: absolute;
+    width: 378px;
+    height: 32px;
+    top: 686px;
+    left: 600px;
+    display: flex;
+    align-items: center;
+}
+
+.pagination-arrow {
+    width: 32px;
+    height: 32px;
+    background: #FFFFFF;
+    border-radius: 50px;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #2E2E2E;
+}
+
+.pagination-arrow.left { transform: rotate(90deg); }
+.pagination-arrow.right { transform: rotate(-90deg); }
+.pagination-arrow:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.pagination-page {
+    width: 32px;
+    height: 32px;
+    background: #FFFFFF;
+    border-radius: 50px;
+    border: none;
+    cursor: pointer;
+    margin: 0 4px;
+    font-family: 'Roboto', sans-serif;
+    font-weight: 500;
+    font-size: 14px;
+    line-height: 16px;
+    letter-spacing: 0.2px;
+    color: #2E2E2E;
+}
+
+.pagination-page.active {
+    background: #BBE2FB;
+}
+
+.pagination-jump {
+    width: 136px;
+    height: 32px;
+    background: #FFFFFF;
+    border-radius: 50px;
+    border: none;
+    font-family: 'Roboto', sans-serif;
+    font-weight: 500;
+    font-size: 14px;
+    line-height: 16px;
+    letter-spacing: 0.2px;
+    color: #2E2E2E;
+    padding: 8px;
+    margin-left: 16px;
+}
+
+
+@media (max-width: 1024px) {
+    .mentor-title {
+        top: 40px;
+        left: 50px;
+        font-size: 28px;
+        width: auto;
+    }
+
+    .mentor-tabs {
+        top: 180px;
+        left: 50px;
+        gap: 20px;
+    }
+
+    .mentor-table-container {
+        top: 280px;
+        left: 50px;
+        width: 90vw;
+        height: auto;
+    }
+
+    .filter-container {
+        left: 50px;
+        width: calc(100vw - 100px);
+    }
+}
+
+
+@media (max-width: 768px) {
+    .mentor-title {
+        top: 30px;
+        left: 20px;
+        font-size: 24px;
+        width: auto;
+    }
+
+    .mentor-tabs {
+        top: 150px;
+        left: 20px;
+        gap: 15px;
+    }
+
+    .mentor-table-container {
+        top: 250px;
+        left: 20px;
+        width: 95vw;
+        height: auto;
+    }
+
+    .filter-container {
+        left: 20px;
+        width: calc(100vw - 40px);
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+
+    .filter-input {
+        flex-grow: 1;
+        min-width: 150px;
+    }
+
+    .filter-button {
+        flex-shrink: 0;
+    }
+}
+
+
+@media (max-width: 480px) {
+    .mentor-title {
+        top: 20px;
+        left: 10px;
+        font-size: 20px;
+        width: auto;
+    }
+
+    .mentor-tabs {
+        top: 120px;
+        left: 10px;
+        gap: 10px;
+    }
+
+    .mentor-table-container {
+        top: 220px;
+        left: 10px;
+        width: 98vw;
+        height: auto;
+    }
+
+    .filter-container {
+        left: 10px;
+        width: calc(100vw - 20px);
+        flex-direction: column;
+    }
+
+    .filter-label, .filter-input, .filter-button {
+        width: 100%;
+        margin-bottom: 8px;
+    }
+}

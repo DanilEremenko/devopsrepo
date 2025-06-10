@@ -1,0 +1,110 @@
+###### Сценарий - авторизация пользователя
+
+##### Подготовительная часть
+
+### Регистрация нового пользователя
+POST http://{{host}}:{{port}}/api/v1/auth/register/
+Content-Type: application/json
+
+{
+  "email": "example@mail.ru",
+  "password": "Admin123456!",
+  "firstName": "Ivan",
+  "lastName": "Ivanov",
+  "company": {
+    "companyTitle": "Company",
+    "inn": "100000000002"
+  }
+}
+
+##### КЕЙС №1 успешная авторизация пользователя
+
+#### Пользователь вводит корректные данные и авторизуется в системе
+
+### Проверка - успешная аутентификация зарегистрированного пользователя
+POST http://{{host}}:{{port}}/api/v1/auth/login/
+Content-Type: application/json
+
+{
+  "login": "example@mail.ru",
+  "password": "Admin123456!"
+}
+
+##### КЕЙС №2 авторизация пользователя с некорректным значением логина
+
+#### Пользователь с незарегистрированным в системе логином не может авторизоваться, при попытке авторизоваться
+#### система должна вернуть ошибочный ответ с кодом 401
+
+### Аутентификация пользователя - 401 ответ
+POST http://{{host}}:{{port}}/api/v1/auth/login/
+Content-Type: application/json
+
+{
+  "login": "example1@mail.ru",
+  "password": "Admin123456!"
+}
+
+##### КЕЙС №3 авторизация пользователя с некорректным значением пароля
+
+#### Пользователь при вводе неверного пароля не может авторизоваться, при попытке авторизоваться
+#### система должна вернуть ошибочный ответ с кодом 401
+
+### Аутентификация пользователя - 401 ответ
+POST http://{{host}}:{{port}}/api/v1/auth/login/
+Content-Type: application/json
+
+{
+  "login": "example@mail.ru",
+  "password": "Admin123456!1"
+}
+
+##### КЕЙС №4 авторизация заблокированного пользователя
+
+#### Заблокированный пользователь не может авторизоваться, при попытке авторизоваться
+#### система должна вернуть ошибочный ответ с кодом 401
+
+### Регистрация нового пользователя
+POST http://{{host}}:{{port}}/api/v1/auth/register/
+Content-Type: application/json
+
+{
+  "email": "blockuser@mail.ru",
+  "password": "Admin123456!",
+  "firstName": "Ivan",
+  "lastName": "Ivanov",
+  "company": {
+    "companyTitle": "Company",
+    "inn": "100000000003"
+  }
+}
+
+### Аутентификация ранее зарегистрированного пользователя с ролью методолога
+POST http://{{host}}:{{port}}/api/v1/auth/login/
+Content-Type: application/json
+
+{
+  "login": "example@mail.ru",
+  "password": "Admin123456!"
+}
+
+### Установка активной роли методолога для возможности блокировки пользователя
+POST http://{{host}}:{{port}}/api/v1/user-profiles/set-active-role/
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+{
+  "activeRole": "METHODOLOGIST"
+}
+
+### Блокировка пользователя
+POST http://{{host}}:{{port}}/api/v1/users/4/block/
+Authorization: Bearer {{authToken}}
+
+### Аутентификация заблокированного пользователя - 401 ответ
+POST http://{{host}}:{{port}}/api/v1/auth/login/
+Content-Type: application/json
+
+{
+  "login": "blockuser@mail.ru",
+  "password": "Admin123456!"
+}

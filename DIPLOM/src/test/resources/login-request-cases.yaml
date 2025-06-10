@@ -1,0 +1,13 @@
+---
+- loginRq: null
+  valid: false
+  comment: Пустой запрос не является валидным
+- loginRq:
+    login: "ws3@mail.ru"
+    password: "Admin123456!"
+  valid: true
+  comment: Все поля заполнены в соответствии с требованиями, запрос валидный
+- loginRq:
+    password: "Admin123456!"
+  valid: false
+  comment: Отсутствует одно из обязательных полей login, запрос не валидный

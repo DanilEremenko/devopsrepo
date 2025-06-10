@@ -1,0 +1,1106 @@
+openapi: 3.1.1
+
+info:
+  title: Be better
+  description: Корпоративный сервис для оценки и развития компетенций сотрудников в рамках выбранной профессии с присвоением грейдов.
+  version: 1.0.0
+
+servers:
+  - url: 'http://localhost:8080'
+
+paths:
+  /api/v1/auth/register/:
+    post:
+      summary: Регистрация нового пользователя
+      operationId: registerUser
+      tags:
+        - Authentication
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required: true
+              properties:
+                email:
+                  $ref: '#/components/schemas/Email'
+                password:
+                  $ref: '#/components/schemas/Password'
+                firstName:
+                  type: string
+                lastName:
+                  type: string
+                company:
+                  $ref: '#/components/schemas/CompanyDetails'
+      responses:
+        201:
+          $ref: '#/components/responses/201'
+        400:
+          $ref: '#/components/responses/400'
+
+  /api/v1/auth/password-recovery/:
+    post:
+      summary: Восстановление пароля
+      operationId: authPasswordRecovery
+      tags:
+        - Authentication
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required: true
+              properties:
+                email:
+                  $ref: '#/components/schemas/Email'
+      responses:
+        200:
+          $ref: '#/components/responses/200'
+        400:
+          $ref: '#/components/responses/400'
+        401:
+          $ref: '#/components/responses/401'
+
+  /api/v1/auth/reset-password/:
+    post:
+      summary: Сброс пароля
+      operationId: authResetPassword
+      tags:
+        - Authentication
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required: true
+              properties:
+                email:
+                  $ref: '#/components/schemas/Email'
+                secret:
+                  type: string
+                newPassword:
+                  $ref: '#/components/schemas/Password'
+      responses:
+        200:
+          $ref: '#/components/responses/200'
+        400:
+          $ref: '#/components/responses/400'
+
+  /api/v1/auth/login/:
+    post:
+      summary: Аутентификация пользователя
+      operationId: authentication
+      description: Токен доступа доступен в течении 5 минут. При получении 401 ответа с токеном доступа последний необходимо обновить через метод refresh. Refresh токен является одноразовым. Срок действия refresh токена 72 часа.
+      tags:
+        - Authentication
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required: true
+              properties:
+                login:
+                  $ref: '#/components/schemas/Email'
+                password:
+                  $ref: '#/components/schemas/Password'
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  accessToken:
+                    $ref: '#/components/schemas/JwtToken'
+                  refreshToken:
+                    $ref: '#/components/schemas/JwtToken'
+        400:
+          $ref: '#/components/responses/400'
+        401:
+          $ref: '#/components/responses/401'
+
+  /api/v1/auth/refresh-token/:
+    post:
+      summary: Обновление refresh токена пользователя
+      operationId: refreshToken
+      tags:
+        - Authentication
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required: true
+              properties:
+                refreshToken:
+                  $ref: '#/components/schemas/JwtToken'
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  accessToken:
+                    $ref: '#/components/schemas/JwtToken'
+                  refreshToken:
+                    $ref: '#/components/schemas/JwtToken'
+        400:
+          $ref: '#/components/responses/400'
+        401:
+          $ref: '#/components/responses/401'
+
+  /api/v1/auth/logout/:
+    post:
+      summary: Выход из системы
+      operationId: logoutUser
+      tags:
+        - Authentication
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required: true
+              properties:
+                accessToken:
+                  $ref: '#/components/schemas/JwtToken'
+      responses:
+        200:
+          $ref: '#/components/responses/200'
+
+  /api/v1/auth/change-password/:
+    post:
+      summary: Изменение пароля текущего пользователя
+      operationId: changePassword
+      tags:
+        - Authentication
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                oldPassword:
+                  $ref: '#/components/schemas/Password'
+                newPassword:
+                  $ref: '#/components/schemas/Password'
+      responses:
+        200:
+          $ref: '#/components/responses/200'
+        400:
+          $ref: '#/components/responses/400'
+        401:
+          $ref: '#/components/responses/401'
+
+  /api/v1/auth/current-user/:
+    get:
+      summary: Получение текущего авторизованного пользователя
+      operationId: getAuthenticatedUser
+      tags:
+        - Authentication
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  user:
+                    $ref: '#/components/schemas/User'
+        401:
+          $ref: '#/components/responses/401'
+
+  /api/v1/users/:
+    get:
+      summary: Вывод списка пользователей с фильтром
+      operationId: userList
+      tags:
+        - Users
+      parameters:
+        - name: lastname
+          in: query
+          description: Фильтр по фамилии пользователя
+          schema:
+            type: string
+        - name: role
+          in: query
+          description: Фильтр по роли пользователя
+          schema:
+            type: string
+            enum:
+              - SPECIALIST
+              - METHODOLOGIST
+              - MENTOR
+              - MANAGER
+        - name: sortBy
+          in: query
+          schema:
+            type: string
+            enum:
+              - lastname
+              - registrationDate
+              - updateDate
+              - activeStatus
+        - $ref: '#/components/parameters/OrderSort'
+        - $ref: '#/components/parameters/PageNumber'
+        - $ref: '#/components/parameters/CountPerPage'
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/UserListItemDto'
+                  page:
+                    $ref: '#/components/schemas/ListPage'
+        400:
+          $ref: '#/components/responses/400'
+        401:
+          $ref: '#/components/responses/401'
+        403:
+          $ref: '#/components/responses/403'
+
+    post:
+      summary: Добавление нового пользователя
+      operationId: addNewUser
+      tags:
+        - Users
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AddUserRq'
+      responses:
+        201:
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        400:
+          $ref: '#/components/responses/400'
+        401:
+          $ref: '#/components/responses/401'
+        403:
+          $ref: '#/components/responses/403'
+
+  /api/v1/users/{id}/:
+    parameters:
+      - $ref: '#/components/parameters/Id'
+    get:
+      summary: Получение детальной информации по профилю сотрудника специалистом компании
+      operationId: userInfo
+      tags:
+        - Users
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        400:
+          $ref: '#/components/responses/400'
+        401:
+          $ref: '#/components/responses/401'
+        403:
+          $ref: '#/components/responses/403'
+    patch:
+      summary: Редактирование профиля пользователя методологом
+      operationId: updateUser
+      tags:
+        - Users
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        400:
+          $ref: '#/components/responses/400'
+        401:
+          $ref: '#/components/responses/401'
+        403:
+          $ref: '#/components/responses/403'
+
+  /api/v1/users/{id}/{action}/:
+    parameters:
+      - $ref: '#/components/parameters/Id'
+      - name: action
+        in: path
+        required: true
+        schema:
+          type: string
+          enum:
+            - block
+            - unblock
+    post:
+      summary: Блокировка/разблокировка пользователя
+      operationId: userAction
+      tags:
+        - Users
+      responses:
+        200:
+          $ref: '#/components/responses/200'
+        400:
+          $ref: '#/components/responses/400'
+        401:
+          $ref: '#/components/responses/401'
+        403:
+          $ref: '#/components/responses/403'
+
+  /api/v1/users/{userId}/roles/:
+    parameters:
+      - $ref: '#/components/parameters/Id'
+    post:
+      summary: Настройка ролей пользователя
+      operationId: setRoles
+      tags:
+        - Users
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RolesEditRq'
+      responses:
+        200:
+          $ref: '#/components/responses/200'
+        400:
+          $ref: '#/components/responses/400'
+        401:
+          $ref: '#/components/responses/401'
+        403:
+          $ref: '#/components/responses/403'
+
+  /api/v1/user-profiles/:
+    get:
+      summary: Информация о текущем профиле пользователя с перечнем ролей и указанием активной роли
+      operationId: userProfileInfo
+      tags:
+        - UserProfile
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserProfileDetailsInfoRs'
+        400:
+          $ref: '#/components/responses/400'
+        401:
+          $ref: '#/components/responses/401'
+        403:
+          $ref: '#/components/responses/403'
+    patch:
+      summary: Редактирование профиля пользователем
+      operationId: updateUserProfile
+      tags:
+        - UserProfile
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserProfile'
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserProfile'
+        400:
+          $ref: '#/components/responses/400'
+        401:
+          $ref: '#/components/responses/401'
+        403:
+          $ref: '#/components/responses/403'
+
+  /api/v1/user-profiles/set-active-role/:
+    post:
+      summary: Установка активной роли
+      operationId: setCurrentRole
+      tags:
+        - UserProfile
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SetActiveRoleRq'
+      responses:
+        200:
+          $ref: '#/components/responses/200'
+        400:
+          $ref: '#/components/responses/400'
+        401:
+          $ref: '#/components/responses/401'
+        403:
+          $ref: '#/components/responses/403'
+
+  /api/v1/files/:
+    post:
+      tags:
+        - Files
+      summary: Загрузка файлов
+      operationId: fileUpload
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
+      responses:
+        201:
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Ref'
+        400:
+          $ref: '#/components/responses/400'
+        401:
+          $ref: '#/components/responses/401'
+        403:
+          $ref: '#/components/responses/403'
+
+  /api/v1/files/{path}/:
+    get:
+      tags:
+        - Files
+      summary: Получение файла
+      operationId: getFile
+      parameters:
+        - name: path
+          in: path
+          required: true
+          schema:
+            type: string
+            example: 35b0bbee-b4bc-4702-9fc3-24924593653a
+      responses:
+        200:
+          description: Успешное получение файла
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StorageRef'
+        400:
+          $ref: '#/components/responses/400'
+        401:
+          $ref: '#/components/responses/401'
+        403:
+          $ref: '#/components/responses/403'
+
+  /api/v1/notifications/:
+    get:
+      summary: Список уведомлений пользователя
+      operationId: userNotificationsList
+      parameters:
+        - $ref: '#/components/parameters/PageNumber'
+        - $ref: '#/components/parameters/CountPerPage'
+      tags:
+        - Notifications
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/UserNotificationsListItemDto'
+                  page:
+                    $ref: '#/components/schemas/ListPage'
+        400:
+          $ref: '#/components/responses/400'
+        401:
+          $ref: '#/components/responses/401'
+
+  /api/v1/notifications/unread/:
+    get:
+      summary: Количество непрочитанных уведомлений
+      operationId: getCountOfUnreadNotifications
+      tags:
+        - Notifications
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: integer
+        400:
+          $ref: '#/components/responses/400'
+        401:
+          $ref: '#/components/responses/401'
+
+
+  /api/v1/feedback/{userId}/:
+    parameters:
+      - $ref: '#/components/parameters/Id'
+    post:
+      summary: Добавление отзыва о специалисте менеджером компании
+      operationId: sendFeedback
+      tags:
+        - Feedback
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Feedback'
+      responses:
+        201:
+          $ref: '#/components/responses/201'
+        400:
+          $ref: '#/components/responses/400'
+        401:
+          $ref: '#/components/responses/401'
+        403:
+          $ref: '#/components/responses/403'
+
+    get:
+      summary: Получение всех отзывов о текущем специалисте
+      operationId: getFeedback
+      tags:
+        - Feedback
+      parameters:
+        - name: page
+          in: query
+          description: Номер страницы для отображения списка
+          schema:
+            $ref: '#/components/parameters/PageNumber'
+        - name: count
+          in: query
+          description: Количество элементов на странице
+          schema:
+            $ref: '#/components/parameters/CountPerPage'
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Feedback'
+                  page:
+                    $ref: '#/components/schemas/ListPage'
+        400:
+          $ref: '#/components/responses/400'
+        401:
+          $ref: '#/components/responses/401'
+        403:
+          $ref: '#/components/responses/403'
+
+components:
+  parameters:
+    Id:
+      in: path
+      description: Идентификатор сущности
+      name: id
+      required: true
+      schema:
+        $ref: '#/components/schemas/Id'
+    PageNumber:
+      in: query
+      description: Номер страницы для отображения списка
+      name: page
+      schema:
+        type: integer
+        example: 1
+        default: 1
+    CountPerPage:
+      in: query
+      name: count
+      description: Количество элементов на странице
+      schema:
+        type: integer
+        example: 30
+        default: 30
+    OrderSort:
+      in: query
+      name: order
+      description: Направление сортировки
+      schema:
+        type: string
+        enum:
+          - asc
+          - desc
+        default: asc
+
+  responses:
+    200:
+      description: OK
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+    201:
+      description: Created
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+    400:
+      description: Bad Request
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              errors:
+                type: array
+                items:
+                  type: string
+    401:
+      description: Unauthorized
+    403:
+      description: Forbidden
+    404:
+      description: Not Found
+
+  schemas:
+    Id:
+      description: Идентификатор сущности
+      type: integer
+      example: 109999
+    Guid:
+      description: Уникальный глобальный строковый идентификатор
+      type: string
+      example: 35b0bbee-b4bc-4702-9fc3-24924593653a
+    Email:
+      type: string
+      description: Значение должно соответствовать формату email. Значение должно быть уникальным.
+      maxLength: 50
+      example: somebody@example.com
+    Password:
+      type: string
+      description: Допускаются латинские буквы, цифры, спецсимволы - !”#$%^&*()-+=?/\. Значение должно содержать хотя бы одну латинскую букву, хотя бы одну цифру и хотя бы один из разрешенных спецсимволов
+      minLength: 8
+      maxLength: 50
+      example: 53d8~4;3Iqi5
+    JwtToken:
+      type: string
+      example: eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJPbmxpbmUgSldUIEJ1aWxkZXIiLCJpYXQiOjE3MjcxNjcwNDAsImV4cCI6MTc1ODcwMzA0MCwiYXVkIjoid3d3LmV4YW1wbGUuY29tIiwic3ViIjoianJvY2tldEBleGFtcGxlLmNvbSIsIkdpdmVuTmFtZSI6IkpvaG5ueSIsIlN1cm5hbWUiOiJSb2NrZXQiLCJFbWFpbCI6Impyb2NrZXRAZXhhbXBsZS5jb20iLCJSb2xlIjpbIk1hbmFnZXIiLCJQcm9qZWN0IEFkbWluaXN0cmF0b3IiXX0.lxI8EOANVo2gBqbm5vvYkRoUXnP9bZd1kPS2vgwOAOM
+    Ref:
+      type: object
+      properties:
+        guid:
+          $ref: '#/components/schemas/Guid'
+        mimetype:
+          type: string
+          example: image/jpeg
+        fileName:
+          type: string
+          example: example.jpg
+    StorageRef:
+      type: object
+      properties:
+        reference:
+          type: string
+          example: http://127.0.0.1:9000/be-better-files/ed3c3d19-a2ce-4bbf-b619-a762092b0c68?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=miniouser%2F20241202%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20241202T094555Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=06acc458e95d4f416037111f1bcac17309198dbff7307d4ffec1d9c3beac5cb6
+    Date:
+      type: string
+      format: date
+      example: '2024-09-17'
+    DateTime:
+      type: string
+      format: date-time
+      example: '2024-09-17 17:17:56'
+    ListPage:
+      description: Данные страницы выводимого списка
+      type: object
+      properties:
+        pageNumber:
+          type: integer
+          description: Номер страницы
+          example: 1
+        itemsPerPage:
+          type: integer
+          description: Количество элементов на странице
+          example: 30
+        pageCount:
+          type: integer
+          description: Количество страниц
+          example: 10
+    Role:
+      description: Роль пользователя
+      type: string
+      enum:
+        - SPECIALIST
+        - METHODOLOGIST
+        - MENTOR
+        - MANAGER
+
+
+    User:
+      description: Базовая сущность пользователя
+      type: object
+      required:
+        - lastname
+        - firstname
+        - login
+      properties:
+        id:
+          $ref: '#/components/schemas/Id'
+        lastname:
+          type: string
+        firstname:
+          type: string
+        middlename:
+          type: string
+        companyDetails:
+          $ref: '#/components/schemas/CompanyDetails'
+        login:
+          $ref: '#/components/schemas/Email'
+        consentGiven:
+          type: boolean
+          description: Признак согласия на обработку персональных данных (true default)
+        activeStatus:
+          type: boolean
+          description: Статус активности (true default)
+        activeRole:
+          $ref: '#/components/schemas/Role'
+
+    RolesEditRq:
+      description: Запрос на редактирование ролей пользователя
+      type: object
+      properties:
+        specialist:
+          $ref: '#/components/schemas/SpecialistEditRq'
+        methodologist:
+          $ref: '#/components/schemas/MethodologistEditRq'
+        mentor:
+          $ref: '#/components/schemas/MentorEditRq'
+        manager:
+          $ref: '#/components/schemas/ManagerEditRq'
+
+    SpecialistEditRq:
+      description: Запрос на редактирование роли SPECIALIST
+      type: object
+      properties:
+        enabled:
+          type: boolean
+        professionId:
+          type: integer
+          description: Идентификатор профессии
+        mentorId:
+          type: integer
+          description: Идентификатор ментора
+        gradeId:
+          type: integer
+          description: Идентификатор грейда
+
+    MethodologistEditRq:
+      description: Запрос на редактирование роли METHODOLOGIST
+      type: object
+      properties:
+        enabled:
+          type: boolean
+        isDutyMentor:
+          type: boolean
+
+    MentorEditRq:
+      description: Запрос на редактирование роли MENTOR
+      type: object
+      properties:
+        enabled:
+          type: boolean
+        supervisedProfessions:
+          type: array
+          items:
+            type: integer
+            description: Идентификатор профессии
+        wards:
+          type: array
+          items:
+            type: integer
+            description: Идентификатор подопечного пользователя
+
+    ManagerEditRq:
+      description: Запрос на редактирование роли MANAGER
+      type: object
+      properties:
+        enabled:
+          type: boolean
+
+    SpecialistDetails:
+      description: Информация для роли SPECIALIST
+      type: object
+      properties:
+        enabled:
+          type: boolean
+        profession:
+          $ref: '#/components/schemas/SimpleObject'
+        mentor:
+          $ref: '#/components/schemas/SimpleObject'
+        grade:
+          $ref: '#/components/schemas/SimpleObject'
+
+    MethodologistDetails:
+      description: Информация для роли METHODOLOGIST
+      type: object
+      properties:
+        enabled:
+          type: boolean
+        isDutyMentor:
+          type: boolean
+
+    MentorDetails:
+      description: Информация для роли MENTOR
+      type: object
+      properties:
+        enabled:
+          type: boolean
+        supervisedProfessions:
+          type: array
+          items:
+            $ref: '#/components/schemas/SimpleObject'
+        wards:
+          type: array
+          items:
+            $ref: '#/components/schemas/UserListItemDto'
+
+    ManagerDetails:
+      description: Информация для роли MANAGER
+      type: object
+      properties:
+        enabled:
+          type: boolean
+
+    SimpleObject:
+      description: Упрощённый объект с id и name
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+
+    UserListItemDto:
+      description: Сущность пользователя для отображения в списке
+      type: object
+      properties:
+        id:
+          $ref: '#/components/schemas/Id'
+        fullname:
+          type: string
+          description: Фамилия и имя пользователя
+          example: Иванов Иван
+        role:
+          type: array
+          items:
+            type: string
+            enum:
+              - SPECIALIST
+              - METHODOLOGIST
+              - MENTOR
+              - MANAGER
+        registrationDate:
+          $ref: '#/components/schemas/Date'
+        updateDate:
+          $ref: '#/components/schemas/Date'
+        activeStatus:
+          type: boolean
+          description: Статус активности
+
+    UserProfile:
+      description: Детальная информация о пользователе
+      type: object
+      properties:
+        id:
+          $ref: '#/components/schemas/Id'
+        lastname:
+          type: string
+        firstname:
+          type: string
+        middlename:
+          type: string
+        roles:
+          type: array
+          items:
+            type: object
+            properties:
+              specialistDetails:
+                $ref: '#/components/schemas/SpecialistDetails'
+              methodologistDetails:
+                $ref: '#/components/schemas/MethodologistDetails'
+              mentorDetails:
+                $ref: '#/components/schemas/MentorDetails'
+              managerDetails:
+                $ref: '#/components/schemas/ManagerDetails'
+        activeStatus:
+          type: boolean
+          description: Статус активности (true default)
+        login:
+          $ref: '#/components/schemas/Email'
+        photo:
+          $ref: '#/components/schemas/Ref'
+        dateOfBirth:
+          $ref: '#/components/schemas/Date'
+        workExperience:
+          type: string
+        companyDetails:
+          $ref: '#/components/schemas/CompanyDetails'
+
+    CompanyDetails:
+      description: Детальная информация о компании
+      type: object
+      required:
+        - companyTitle
+        - inn
+      properties:
+        companyTitle:
+          type: string
+          description: Допустимые символы латинские и кириллические буквы, цифры, спецсимволы _- .,:;!?”%&*№()/\ (нижнее подчеркивание, дефис, пробел, точка, запятая, точка с запятой, двоеточие, восклицательный знак, вопросительный знак, кавычки, знак процента, амперсанд, звездочка, номер, скобки, прямой и обратный слеш. Значение не должно включать только пробелы и/или дефисы.
+          minLength: 1
+          maxLength: 100
+        inn:
+          type: string
+          description: Допустимое количество символов 10 или 12 (для юридического лица и ИП соответственно). Допустимые символы цифры. Значение должно быть уникальным.
+          minLength: 10
+          maxLength: 12
+
+    UserNotificationsListItemDto:
+      description: Системное уведомление для отображения в списке
+      type: object
+      properties:
+        id:
+          $ref: '#/components/schemas/Id'
+        initiator:
+          type: object
+          properties:
+            id:
+              $ref: '#/components/schemas/Id'
+            fullName:
+              type: string
+            avatarUrl:
+              $ref: '#/components/schemas/Ref'
+        message:
+          type: string
+        createdAt:
+          $ref: '#/components/schemas/DateTime'
+        isRead:
+          type: boolean
+
+    Feedback:
+      description: Обратная связь
+      type: object
+      properties:
+        id:
+          $ref: '#/components/schemas/Id'
+        author:
+          type: object
+          properties:
+            id:
+              $ref: '#/components/schemas/Id'
+            fullName:
+              type: string
+        message:
+          type: string
+        createdAt:
+          $ref: '#/components/schemas/Date'
+
+    SetActiveRoleRq:
+      description: Запрос на редактирование ролей пользователя
+      type: object
+      properties:
+        activeRole:
+          schema:
+            $ref: '#/components/schemas/Role'
+
+    UserProfileDetailsInfoRs:
+      description: Детальная информация о профиле пользователя с набором ролей и указанием активной роли
+      type: object
+      properties:
+        id:
+          $ref: '#/components/schemas/Id'
+        lastname:
+          type: string
+        firstname:
+          type: string
+        middlename:
+          type: string
+        roles:
+          type: array
+          items:
+            $ref: '#/components/schemas/UserRoleDto'
+          uniqueItems: true
+        activeRole:
+          $ref: '#/components/schemas/UserRoleDto'
+        activeStatus:
+          type: boolean
+          description: показывает активный ли профиль
+        login:
+          type: string
+        photo:
+          $ref: '#/components/schemas/Ref'
+        dateOfTheBirth:
+          type: date
+        workExperience:
+          type: string
+        company:
+          $ref: '#/components/schemas/CompanyDetails'
+
+    UserRoleDto:
+      type: object
+      properties:
+        id:
+          $ref: '#/components/schemas/Id'
+        roleType:
+          schema:
+            type: string
+            enum:
+              - SPECIALIST
+              - METHODOLOGIST
+              - MENTOR
+              - MANAGER
+
+    AddUserRq:
+      description: Добавление нового пользователя методологом
+      type: object
+      properties:
+        lastname:
+          type: string
+        firstname:
+          type: string
+        middlename:
+          type: string
+        login:
+          $ref: '#/components/schemas/Email'
+        activeStatus:
+          type: boolean
+          description: Статус активности (true default)
+        activeRole:
+          $ref: '#/components/schemas/Role'

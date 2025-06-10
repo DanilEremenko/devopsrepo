@@ -1,0 +1,320 @@
+###### Уведомления пользователей (почта, внутренние)
+
+##### Сценарий - регистрация пользователя
+
+##### КЕЙС №1 успешная регистрация пользователя
+
+#### При успешной регистрации пользователя на его email отправляется почтовое уведомление
+
+### Регистрация нового пользователя
+POST http://{{host}}:{{port}}/api/v1/auth/register/
+Content-Type: application/json
+
+{
+  "email": "notification@mail.ru",
+  "password": "Admin123456!",
+  "firstName": "Ivan",
+  "lastName": "Ivanov",
+  "company": {
+    "companyTitle": "Company",
+    "inn": "200000000001"
+  }
+}
+
+##### Сценарий - восстановление доступа
+
+##### КЕЙС №1 успешное восстановление пароля
+
+#### При успешном восстановлении пароля пользователя на его email отправляется почтовое уведомление
+
+### Запрос на восстановление/установку пароля, получения ссылки для установки нового пароля
+POST http://{{host}}:{{port}}/api/v1/auth/password-recovery/
+Content-Type: application/json
+
+{
+  "login": "notification@mail.ru"
+}
+
+##### Сценарий - добавление нового пользователя методологом
+
+##### КЕЙС №1 успешное добавление нового пользователя методологом
+
+#### При успешном добавлении нового пользователя на его email отправляется почтовое уведомление
+
+### Аутентификация зарегистрированного пользователя
+POST http://{{host}}:{{port}}/api/v1/auth/login/
+Content-Type: application/json
+
+{
+  "login": "notification@mail.ru",
+  "password": "Admin123456!"
+}
+
+### Установка активной роли методолога для возможности добавить нового пользователя
+POST http://{{host}}:{{port}}/api/v1/user-profiles/set-active-role/
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+{
+  "activeRole": "METHODOLOGIST"
+}
+
+### Добавление нового пользователя методологом
+POST http://localhost:8080/api/v1/users/
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+{
+  "lastName": "Petrov",
+  "firstName": "Petr",
+  "middleName": "Petrovich",
+  "login": "userbymethodologist@mail.ru",
+  "activeStatus": true,
+  "activeRole": "SPECIALIST"
+}
+
+##### Сценарий - оставить обратную связь о специалисте
+
+##### КЕЙС №1 успешное добавление нового отзыва о специалисте менеджером
+
+#### При успешном добавлении нового отзыва о специалисте менеджером всем пользователям с ролью “менеджер”, кроме
+#### текущего пользователя, отправляются системное и почтовое уведомления о появлении нового комментария о специалисте.
+
+#### 1.Создание нового менеджера, которому в дальнейшем прийдет уведомление о появлении нового комментария о специалисте
+
+### Регистрация нового пользователя
+POST http://{{host}}:{{port}}/api/v1/auth/register/
+Content-Type: application/json
+
+{
+  "email": "manager1@mail.ru",
+  "password": "Admin123456!",
+  "firstName": "Petr",
+  "lastName": "Petrov",
+  "company": {
+    "companyTitle": "Company",
+    "inn": "300000000001"
+  }
+}
+
+### Аутентификация зарегистрированного пользователя
+POST http://{{host}}:{{port}}/api/v1/auth/login/
+Content-Type: application/json
+
+{
+  "login": "manager1@mail.ru",
+  "password": "Admin123456!"
+}
+
+### Установка активной роли методолога для возможности установить роль менеджера
+POST http://{{host}}:{{port}}/api/v1/user-profiles/set-active-role/
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+{
+  "activeRole": "METHODOLOGIST"
+}
+
+### Добавление роли менеджера и присвоение ей статуса активной
+PATCH http://{{host}}:{{port}}/api/v1/users/update-user-profile/
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+{
+  "userId": 3,
+  "lastName": "Petrov",
+  "firstName": "Petr",
+  "middleName": "Petrovich",
+  "roles": ["MENTOR", "METHODOLOGIST", "MANAGER"],
+  "activeRole": "MANAGER",
+  "activeStatus": true,
+  "login": "manager1@mail.ru"
+}
+
+#### 2.Создание нового менеджера, который оставит новый отзыв о специалисте
+
+### Регистрация нового пользователя
+POST http://{{host}}:{{port}}/api/v1/auth/register/
+Content-Type: application/json
+
+{
+  "email": "manager2@mail.ru",
+  "password": "Admin123456!",
+  "firstName": "Petr",
+  "lastName": "Petrov",
+  "company": {
+    "companyTitle": "Company",
+    "inn": "300000000002"
+  }
+}
+
+### Аутентификация зарегистрированного пользователя
+POST http://{{host}}:{{port}}/api/v1/auth/login/
+Content-Type: application/json
+
+{
+  "login": "manager2@mail.ru",
+  "password": "Admin123456!"
+}
+
+### Установка активной роли методолога для возможности установить роль менеджера
+POST http://{{host}}:{{port}}/api/v1/user-profiles/set-active-role/
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+{
+  "activeRole": "METHODOLOGIST"
+}
+
+### Добавление роли менеджера и присвоение ей статуса активной
+PATCH http://{{host}}:{{port}}/api/v1/users/update-user-profile/
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+{
+  "userId": 4,
+  "lastName": "Ivanov",
+  "firstName": "Ivan",
+  "middleName": "Ivanovich",
+  "roles": ["MENTOR", "METHODOLOGIST", "MANAGER"],
+  "activeRole": "MANAGER",
+  "activeStatus": true,
+  "login": "manager2@mail.ru"
+}
+
+### Добавление отзыва специалисту
+POST http://{{host}}:{{port}}/api/v1/feedback/2/
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+{
+  "message": "Новый отзыв"
+}
+
+#### 3.Проверка получения другим менеджером уведомления о появлении нового комментария о специалисте
+
+### Аутентификация менеджера
+POST http://{{host}}:{{port}}/api/v1/auth/login/
+Content-Type: application/json
+
+{
+  "login": "manager1@mail.ru",
+  "password": "Admin123456!"
+}
+
+### Получение менеджером списка всех своих уведомлений
+GET http://{{host}}:{{port}}/api/v1/notifications/
+Authorization: Bearer {{authToken}}
+
+##### Сценарий - заблокировать профиль пользователя
+
+##### КЕЙС №1 успешное блокирование профиля пользователя
+
+#### При успешном блокировании профиля пользователя, у которого была включена роль “специалист”, отправляются
+#### системные и почтовые уведомления его ментору об исключении специалиста из его списка подопечных,
+#### а также всем пользователям с ролью “менеджер”.
+
+### 1.Создание нового специалиста, который в дальнейшем будет заблокирован
+
+### Регистрация нового пользователя
+POST http://{{host}}:{{port}}/api/v1/auth/register/
+Content-Type: application/json
+
+{
+  "email": "specialistblock@mail.ru",
+  "password": "Admin123456!",
+  "firstName": "Petr",
+  "lastName": "Petrov",
+  "company": {
+    "companyTitle": "Company",
+    "inn": "300000000003"
+  }
+}
+
+### Аутентификация зарегистрированного пользователя
+POST http://{{host}}:{{port}}/api/v1/auth/login/
+Content-Type: application/json
+
+{
+  "login": "specialistblock@mail.ru",
+  "password": "Admin123456!"
+}
+
+### Установка активной роли методолога для возможности установить роль специалиста
+POST http://{{host}}:{{port}}/api/v1/user-profiles/set-active-role/
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+{
+  "activeRole": "METHODOLOGIST"
+}
+
+### Добавление роли специалиста и присвоение ей статуса активной
+PATCH http://{{host}}:{{port}}/api/v1/users/update-user-profile/
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+{
+  "userId": 5,
+  "lastName": "Petrov",
+  "firstName": "Petr",
+  "middleName": "Petrovich",
+  "roles": ["MENTOR", "METHODOLOGIST", "SPECIALIST"],
+  "activeRole": "SPECIALIST",
+  "activeStatus": true,
+  "login": "specialistblock@mail.ru"
+}
+
+### 2.Блокирование профиля созданного специалиста методологом
+
+### Регистрация нового пользователя
+POST http://{{host}}:{{port}}/api/v1/auth/register/
+Content-Type: application/json
+
+{
+  "email": "methodologist@mail.ru",
+  "password": "Admin123456!",
+  "firstName": "Petr",
+  "lastName": "Petrov",
+  "company": {
+    "companyTitle": "Company",
+    "inn": "300000000004"
+  }
+}
+
+### Аутентификация зарегистрированного пользователя
+POST http://{{host}}:{{port}}/api/v1/auth/login/
+Content-Type: application/json
+
+{
+  "login": "methodologist@mail.ru",
+  "password": "Admin123456!"
+}
+
+### Установка активной роли методолога для возможности установить роль специалиста
+POST http://{{host}}:{{port}}/api/v1/user-profiles/set-active-role/
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+{
+  "activeRole": "METHODOLOGIST"
+}
+
+### Блокировка пользователя
+POST http://{{host}}:{{port}}/api/v1/users/5/block/
+Authorization: Bearer {{authToken}}
+
+#### 3.Проверка получения менеджером уведомления о блокировке профиля пользователя
+
+### Аутентификация менеджера
+POST http://{{host}}:{{port}}/api/v1/auth/login/
+Content-Type: application/json
+
+{
+  "login": "manager1@mail.ru",
+  "password": "Admin123456!"
+}
+
+### Получение менеджером списка всех своих уведомлений
+GET http://{{host}}:{{port}}/api/v1/notifications/
+Authorization: Bearer {{authToken}}

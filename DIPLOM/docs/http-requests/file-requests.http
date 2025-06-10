@@ -1,0 +1,3 @@
+### Получение файла
+GET http://{{host}}:{{port}}/api/v1/files/da6b1fad-eb91-4a3f-a941-ff49b8b2cc00/
+Authorization: Bearer {{authToken}}

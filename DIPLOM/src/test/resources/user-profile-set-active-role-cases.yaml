@@ -1,0 +1,13 @@
+---
+- data:
+    activeRole: null
+  valid: false
+  comment: Невалидный объект - пустой объект
+- data:
+      activeRole:
+  valid: false
+  comment: Невалидный объект - в объекте отсутствует информация для установки роли
+- data:
+    activeRole: SPECIALIST
+  valid: true
+  comment: Валидный объект

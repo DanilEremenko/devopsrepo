@@ -1,0 +1,229 @@
+### Сценарии использования для работы с профилем пользователя
+
+#### Кейс №1 - Установка активной роли
+
+#### Пользователь может успешно переключиться на роль, которая имеется в его пуле
+
+### Регистрация нового пользователя
+POST http://{{host}}:{{port}}/api/v1/auth/register/
+Content-Type: application/json
+
+{
+  "email": "userprofiletest@mail.ru",
+  "password": "Admin123456!",
+  "firstName": "userprofiletest",
+  "lastName": "userprofiletest",
+  "company": {
+    "companyTitle": "NewCompany",
+    "inn": "400000000001"
+  }
+}
+
+### Аутентификация зарегистрированного пользователя
+POST http://{{host}}:{{port}}/api/v1/auth/login/
+Content-Type: application/json
+
+{
+  "login": "userprofiletest@mail.ru",
+  "password": "Admin123456!"
+}
+
+### Установка активной роли
+POST http://{{host}}:{{port}}/api/v1/user-profiles/set-active-role/
+Authorization: Bearer {{authToken}}
+Content-Type: application/json
+
+{
+  "activeRole": "METHODOLOGIST"
+}
+
+### Получение профиля с установленной активной ролью
+GET http://{{host}}:{{port}}/api/v1/user-profiles/
+Accept: application/json
+Authorization: Bearer {{authToken}}
+
+#### Кейс №2 - Установка активной роли, которой нет в пуле пользователя
+
+#### Пользователь не может переключиться на роль, которой нет в его пуле, при попытке переключиться
+#### система должна вернуть ошибочный ответ с кодом 400
+
+### Установка некорректной роли роли - 400 ответ
+POST http://{{host}}:{{port}}/api/v1/user-profiles/set-active-role/
+Authorization: Bearer {{authToken}}
+Content-Type: application/json
+
+{
+  "activeRole": "SPECIALIST"
+}
+
+### Кейс №3 - Установка несуществующей роли
+
+#### Пользователь не может переключиться на роль, которая отсутствует в системе, при попытке переключиться
+#### система должна вернуть ошибочный ответ с кодом 400
+
+### Установка несуществующей роли роли - 400 ответ
+POST http://{{host}}:{{port}}/api/v1/user-profiles/set-active-role/
+Authorization: Bearer {{authToken}}
+Content-Type: application/json
+
+{
+  "activeRole": "ROLE"
+}
+
+### Кейс №4 - Обновление профиля пользователем
+
+#### Пользователь в своем профиле может обновить поля даты рождения, опыта работы и загрузить фото
+
+### Аутентификация зарегистрированного пользователя
+POST http://{{host}}:{{port}}/api/v1/auth/login/
+Content-Type: application/json
+
+{
+  "login": "userprofiletest@mail.ru",
+  "password": "Admin123456!"
+}
+
+### Получение профиля в первоначальном состоянии
+GET http://{{host}}:{{port}}/api/v1/user-profiles/
+Accept: application/json
+Authorization: Bearer {{authToken}}
+
+### Загрузить новое фото профиля
+POST http://{{host}}:{{port}}/api/v1/files/
+Accept: application/json
+Authorization: Bearer {{authToken}}
+Content-Type: multipart/form-data; boundary=WebAppBoundary
+
+--WebAppBoundary
+Content-Disposition: form-data; name="file"; filename="avatar.png"
+Content-Type: image/png;
+
+< ./avatar.png
+
+### Обновление профиля пользователем
+POST http://{{host}}:{{port}}/api/v1/user-profiles/update-user-profile/
+Authorization: Bearer {{authToken}}
+Content-Type: application/json
+
+{
+  "dateOfBirth": "2024-12-16",
+  "workExperience": "Обновленный опыт работы",
+  "photo": {
+    "guid": "3ab4df6d-35e6-402c-8f93-ee200c431837",
+    "mimeType": "image/png;",
+    "fileName": "avatar.png"
+  }
+}
+
+### Кейс №5 - Установка в качестве фото профиля текстового файла
+
+#### Пользователь не может установить в качестве фото профиля текстового файла, при попытке установки система
+#### система должна вернуть ошибочный ответ с кодом 400
+
+### Получение профиля в первоначальном состоянии
+GET http://{{host}}:{{port}}/api/v1/user-profiles/
+Accept: application/json
+Authorization: Bearer {{authToken}}
+
+### Загрузить новое фото профиля
+POST http://{{host}}:{{port}}/api/v1/files/
+Accept: application/json
+Authorization: Bearer {{authToken}}
+Content-Type: multipart/form-data; boundary=WebAppBoundary
+
+--WebAppBoundary
+Content-Disposition: form-data; name="file"; filename="test.txt"
+Content-Type: text/plain;
+
+< ./test.txt
+
+### Обновление профиля пользователем - 400 ответ
+POST http://{{host}}:{{port}}/api/v1/user-profiles/update-user-profile/
+Authorization: Bearer {{authToken}}
+Content-Type: application/json
+
+{
+  "dateOfBirth": "2024-12-16",
+  "workExperience": "Обновленный опыт работы",
+  "photo": {
+    "guid": "846d499d-f535-4d1c-9bd5-b776011de20f",
+    "mimeType": "text/plain;",
+    "fileName": "test.txt"
+  }
+}
+
+### Кейс №6 - Обновление профиля пользователя методологом
+
+#### Все поля профиля пользователя могут быть изменены методологом
+
+### Регистрация нового пользователя
+POST http://{{host}}:{{port}}/api/v1/auth/register/
+Content-Type: application/json
+
+{
+  "email": "userprofilemodify@mail.ru",
+  "password": "Admin123456!",
+  "firstName": "userprofilemodify",
+  "lastName": "userprofilemodify",
+  "company": {
+    "companyTitle": "NewCompany",
+    "inn": "400000000002"
+  }
+}
+
+### Аутентификация зарегистрированного пользователя с активной ролью методолога
+POST http://{{host}}:{{port}}/api/v1/auth/login/
+Content-Type: application/json
+
+{
+  "login": "userprofiletest@mail.ru",
+  "password": "Admin123456!"
+}
+
+### Обновление профиля пользователя методологом
+PATCH http://localhost:8080/api/v1/users/update-user-profile/
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+{
+  "userId": 9,
+  "lastName": "userprofilemodify",
+  "firstName": "userprofilemodify",
+  "roles": ["MENTOR", "METHODOLOGIST", "SPECIALIST"],
+  "activeRole": "SPECIALIST",
+  "activeStatus": true,
+  "login": "userprofilemodify@mail.ru",
+  "dateOfBirth": "2024-12-16",
+  "workExperience": "1 год"
+}
+
+### Кейс №7 - Добавление в профиль пользователя несуществующей роли
+
+#### Пользователь не может добавить в профиль несуществующую роль, при попытке добавления
+#### система должна вернуть ошибочный ответ с кодом 400
+
+### Аутентификация зарегистрированного пользователя с активной ролью методолога
+POST http://{{host}}:{{port}}/api/v1/auth/login/
+Content-Type: application/json
+
+{
+  "login": "userprofiletest@mail.ru",
+  "password": "Admin123456!"
+}
+
+### Обновление профиля пользователя методологом - 400 ответ
+PATCH http://localhost:8080/api/v1/users/update-user-profile/
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+{
+  "userId": 9,
+  "lastName": "userprofilemodify",
+  "firstName": "userprofilemodify",
+  "roles": ["MENTOR", "METHODOLOGIST", "ROLE"],
+  "activeRole": "ROLE",
+  "activeStatus": true,
+  "login": "userprofilemodify@mail.ru",
+  "dateOfBirth": "2024-12-16",
+  "workExperience": "1 год"
+}

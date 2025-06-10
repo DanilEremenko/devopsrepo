@@ -1,0 +1,121 @@
+.form-header {
+    text-align: center;
+    margin: 24px 0 12px;
+}
+
+.logo-text {
+    font-size: 26px;
+    font-weight: 600;
+    color: #56b8ff;
+    text-transform: uppercase;
+}
+
+.login-form {
+    max-width: 400px;
+    width: 100%;
+    margin: 0 auto;
+    padding: 0 16px;
+    display: flex;
+    flex-direction: column;
+}
+
+
+.input-custom-login {
+    height: 40px !important;
+    width: 100% !important;
+    background: #ffffff !important;
+    border: 2px solid #e4ebf7 !important;
+    border-radius: 8px !important;
+    font-size: 14px !important;
+    box-sizing: border-box !important;
+    padding: 0 12px;
+}
+
+.input-custom-login input,
+.input-custom-login .ant-input,
+.input-custom-login .ant-input-password {
+    font-size: 14px;
+    height: 100%;
+    width: 100% !important;
+    box-sizing: border-box;
+}
+
+.login-form .ant-form-item {
+    margin-bottom: 20px;
+}
+
+
+.login-form .ant-typography-secondary a {
+    font-size: 12px;
+    color: #96A6BA;
+    text-decoration: underline;
+}
+
+.login-form .ant-typography-secondary a:hover {
+    color: #56b8ff;
+}
+
+.link-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+
+.submit-btn {
+    height: 40px;
+    background-color: #56b8ff;
+    border: none;
+    border-radius: 8px;
+    font-weight: bold;
+    font-size: 12px;
+    text-transform: uppercase;
+}
+
+.submit-btn:hover {
+    background-color: #3a9de5;
+}
+
+
+@media (max-width: 1440px) {
+    .login-form {
+        max-width: 360px;
+    }
+
+    .logo-text {
+        font-size: 24px;
+    }
+}
+
+@media (max-width: 1366px) {
+    .login-form {
+        max-width: 340px;
+    }
+
+    .logo-text {
+        font-size: 22px;
+    }
+
+    .submit-btn {
+        font-size: 11px;
+    }
+
+    .input-custom-login {
+        height: 36px !important;
+        font-size: 13px !important;
+    }
+
+    .login-form .ant-typography-secondary a {
+        font-size: 11px;
+    }
+}
+
+@media (max-width: 1280px) {
+    .login-form {
+        max-width: 320px;
+    }
+
+    .logo-text {
+        font-size: 20px;
+    }
+}

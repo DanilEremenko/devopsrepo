@@ -1,0 +1,21 @@
+---
+- userId: 64f05f54-d38b-466e-af8d-c9f419b00b70
+  data: null
+  valid: false
+  comment: Невалидный объект - пустой объект
+- userId: 64f05f54-d38b-466e-af8d-c9f419b00b70
+  data:
+    message:
+  valid: false
+  comment: Невалидный объект - пустое сообщение
+- userId: 64f05f54-d38b-466e-af8d-c9f419b00b70
+  data:
+    message: '    '
+  valid: false
+  comment: Невалидный объект - сообщение состоит только из пробелов
+- userId: 64f05f54-d38b-466e-af8d-c9f419b00b70
+  data:
+    message: 123
+  valid: true
+  comment: Валидный объект
+

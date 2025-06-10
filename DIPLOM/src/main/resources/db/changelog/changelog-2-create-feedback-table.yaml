@@ -1,0 +1,41 @@
+databaseChangeLog:
+  - changeSet:
+      id: 5-create-feedback-table
+      author: Danil Eremenko
+      changes:
+        - createTable:
+            tableName: specialist_feedback
+            columns:
+              - column:
+                  name: id
+                  type: UUID
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: message
+                  type: varchar(500)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: created_at
+                  type: timestamp
+              - column:
+                  name: manager_id
+                  type: UUID
+              - column:
+                  name: specialist_id
+                  type: UUID
+
+        - addForeignKeyConstraint:
+            baseTableName: specialist_feedback
+            baseColumnNames: manager_id
+            constraintName: fk_manager_id
+            referencedTableName: users
+            referencedColumnNames: id
+
+        - addForeignKeyConstraint:
+            baseTableName: specialist_feedback
+            baseColumnNames: specialist_id
+            constraintName: fk_specialist_id
+            referencedTableName: users
+            referencedColumnNames: id

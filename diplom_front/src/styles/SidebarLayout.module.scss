@@ -1,0 +1,177 @@
+.layout {
+    min-height: 100vh;
+}
+
+.customSidebar {
+    height: 100vh;
+    border-right: 1px solid #A3B3CC;
+    background-color: #fff;
+    position: fixed;
+    top: 0;
+    left: 0;
+    padding: 12px;
+    box-sizing: border-box;
+    z-index: 100;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.sidebarWrapper {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    width: 100%;
+}
+
+.sidebarLogo {
+    margin-bottom: 12px;
+}
+
+.logoImg {
+    width: 90px;
+    height: auto;
+}
+
+.sidebarContent {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    padding: 0 4px;
+    overflow: hidden;
+}
+
+.sidebarFooter {
+    padding-top: 8px;
+    width: 100%;
+    flex-shrink: 0;
+}
+
+
+.contentWrapper {
+    margin-left: 400px;
+    background-color: #f7f9fc;
+    min-height: 100vh;
+    overflow: hidden;
+}
+
+.backgroundImage {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+
+
+@media (max-width: 768px) {
+    .customSidebar {
+        width: 100%;
+        position: relative;
+        border-right: none;
+    }
+
+    .contentWrapper {
+        margin-left: 0;
+    }
+
+    .backgroundImage {
+        display: none;
+    }
+}
+
+@media (max-width: 1600px) {
+    .customSidebar {
+        width: 340px;
+    }
+
+    .contentWrapper {
+        margin-left: 340px;
+    }
+}
+
+@media (max-width: 1440px) {
+    .customSidebar {
+        width: 300px;
+    }
+
+    .contentWrapper {
+        margin-left: 300px;
+    }
+
+    .logoImg {
+        width: 80px;
+    }
+}
+
+@media (max-width: 1366px) {
+    .customSidebar {
+        width: 280px;
+    }
+
+    .contentWrapper {
+        margin-left: 280px;
+    }
+
+    .logoImg {
+        width: 70px;
+    }
+}
+
+/* 1600px */
+@media (max-width: 1600px) {
+    .customSidebar { width: 340px; }
+}
+
+/* 1440px */
+@media (max-width: 1440px) {
+    .customSidebar { width: 300px; }
+    .logoImg { width: 80px; }
+}
+
+/* 1366px */
+@media (max-width: 1366px) {
+    .customSidebar { width: 280px; }
+    .logoImg { width: 70px; }
+}
+
+/* планшеты 1024px */
+@media (max-width: 1024px) {
+    .customSidebar { width: 240px; padding: 8px; }
+    .logoImg { width: 60px; }
+}
+
+/* мобилки */
+@media (max-width: 768px) {
+    .layout { flex-direction: column; }
+    .customSidebar {
+        width: 100%;
+        height: auto;
+        border-right: none;
+    }
+    .contentWrapper {
+        height: auto;
+        background-image: none;
+    }
+}
+
+@media screen and (max-height: 840px) {
+
+    .customSidebar {
+        padding-top: 8px;
+        padding-bottom: 8px;
+
+        .sidebarLogo { margin-bottom: 8px; }
+        .sidebarFooter { padding-top: 4px; }
+    }
+}
+
+@media screen and (max-height: 528px) {
+    .customSidebar {
+        padding: 4px;
+
+        .sidebarLogo { margin-bottom: 4px; }
+        .logoImg { width: 60px; }
+        .sidebarFooter { padding-top: 2px; }
+    }
+}

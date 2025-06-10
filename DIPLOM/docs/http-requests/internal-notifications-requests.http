@@ -1,0 +1,7 @@
+### Получение списка всех уведомлений пользователя
+GET http://{{host}}:{{port}}/api/v1/notifications/?page=1&count=10
+Authorization: Bearer {{authToken}}
+
+### Получение количества непрочитанных уведомлений
+GET http://{{host}}:{{port}}/api/v1/notifications/unread/
+Authorization: Bearer {{authToken}}

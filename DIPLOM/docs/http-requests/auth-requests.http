@@ -1,0 +1,68 @@
+### Регистрация первого пользователя и новой компании
+POST http://localhost:8081/api/v1/auth/register/
+Content-Type: application/json
+
+{
+  "email": "ts1@mail.ru",
+  "password": "Admin123456!",
+  "firstName": "Test",
+  "lastName": "Test",
+  "company": {
+    "companyTitle": "????",
+    "inn": "000000000001"
+  }
+}
+
+### Аутентификация зарегистрированного пользователя
+POST http://{{host}}:{{port}}/api/v1/auth/login/
+Content-Type: application/json
+
+{
+  "login": "ts1@mail.ru",
+  "password": "Admin123456!"
+}
+
+### Выход из системы аутентифицированным пользователем
+POST http://{{host}}:{{port}}/api/v1/auth/logout/
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+{
+  "refreshToken": "eyJhbGciOiJIUzUxMiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICIxOGM0NzgxOC1iYzQyLTQ0YzgtODViNC1hODljYmZiMTAzMjIifQ.eyJleHAiOjE3MzMyOTkyNTAsImlhdCI6MTczMzI5NzQ1MCwianRpIjoiNTA1YjJlZjUtNmViZS00OTkzLTkzZTktZDQwNjhiMjUxNzEzIiwiaXNzIjoiaHR0cDovL2xvY2FsaG9zdDo4MDgyL3JlYWxtcy9iZS1iZXR0ZXIta2V5Y2xvYWstcmVhbG0iLCJhdWQiOiJodHRwOi8vbG9jYWxob3N0OjgwODIvcmVhbG1zL2JlLWJldHRlci1rZXljbG9hay1yZWFsbSIsInN1YiI6IjM3NGJlYjAxLTJhNzYtNGU3ZC1hOTE3LTZkMWFhMTgyZDIxYiIsInR5cCI6IlJlZnJlc2giLCJhenAiOiJiZS1iZXR0ZXItY2xpZW50Iiwic2lkIjoiOTFkYmYzZGEtNTk3Ny00N2Q2LWFiMWUtNzI0YWU4ZTlmZTU5Iiwic2NvcGUiOiJlbWFpbCBiYXNpYyBhY3Igcm9sZXMgcHJvZmlsZSB3ZWItb3JpZ2lucyJ9.SYC6xkWIO0_4_z9oN1KbHSELKR_7-WlBrG1fN73R7rIxbvTAAl0TGt8e8fTcT1j_MoCWtgfWWfqdWbEtHkMJsg"
+}
+
+### Запрос на восстановление/установку пароля, получения ссылки для установки нового пароля
+POST http://{{host}}:{{port}}/api/v1/auth/password-recovery/
+Content-Type: application/json
+
+{
+  "login": "ts3@mail.ru"
+}
+
+### Установка нового пароля при переходе по ссылке для установки нового пароля
+POST http://{{host}}:{{port}}/api/v1/auth/reset-password/
+Content-Type: application/json
+
+{
+  "login": "ts3@mail.ru",
+  "secret": "9798518e-0547-47c8-8090-67267931b26f",
+  "newPassword": "Admin654321!"
+}
+
+### Обновление пары токенов доступа по refresh токену
+POST http://{{host}}:{{port}}/api/v1/auth/refresh-token/
+Content-Type: application/json
+
+{
+  "refreshToken": "eyJhbGciOiJIUzUxMiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICIxOGM0NzgxOC1iYzQyLTQ0YzgtODViNC1hODljYmZiMTAzMjIifQ.eyJleHAiOjE3MzMyOTk1NzMsImlhdCI6MTczMzI5Nzc3MywianRpIjoiOTM2Y2YxOTUtNmM3Zi00MjgzLWEyMDMtM2JiNDJhNjdkMDk3IiwiaXNzIjoiaHR0cDovL2xvY2FsaG9zdDo4MDgyL3JlYWxtcy9iZS1iZXR0ZXIta2V5Y2xvYWstcmVhbG0iLCJhdWQiOiJodHRwOi8vbG9jYWxob3N0OjgwODIvcmVhbG1zL2JlLWJldHRlci1rZXljbG9hay1yZWFsbSIsInN1YiI6IjM3NGJlYjAxLTJhNzYtNGU3ZC1hOTE3LTZkMWFhMTgyZDIxYiIsInR5cCI6IlJlZnJlc2giLCJhenAiOiJiZS1iZXR0ZXItY2xpZW50Iiwic2lkIjoiNGRjZjNjOTUtZjNhYy00MTcxLTk1NjctYzg1YzhjNTk3ZWNiIiwic2NvcGUiOiJlbWFpbCBiYXNpYyBhY3Igcm9sZXMgcHJvZmlsZSB3ZWItb3JpZ2lucyJ9.M7KJJPIUqbo69_EgDarCjDVO2SSXJ4pKB1UxA1ilqcktsMYdzLTJPhCJnsT7rz7D7iF56TZjsNB86LgL-JU4mw"
+}
+
+### Смена пароля текущим аутентифицированным пользователем
+POST http://{{host}}:{{port}}/api/v1/auth/change-password/
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+{
+  "oldPassword": "Admin654321!",
+  "newPassword": "Admin123456!"
+}

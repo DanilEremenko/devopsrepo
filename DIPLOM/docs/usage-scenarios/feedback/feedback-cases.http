@@ -1,0 +1,220 @@
+###### Сценарий для роли “менеджер” - оставить обратную связь о специалисте
+
+##### Подготовительная часть
+
+#### Создание специалиста
+
+### Регистрация нового пользователя
+POST http://{{host}}:{{port}}/api/v1/auth/register/
+Content-Type: application/json
+
+{
+  "email": "specialist@mail.ru",
+  "password": "Admin123456!",
+  "firstName": "Ivan",
+  "lastName": "Ivanov",
+  "company": {
+    "companyTitle": "Company",
+    "inn": "100000000001"
+  }
+}
+
+### Аутентификация зарегистрированного пользователя
+POST http://{{host}}:{{port}}/api/v1/auth/login/
+Content-Type: application/json
+
+{
+  "login": "specialist@mail.ru",
+  "password": "Admin123456!"
+}
+
+### Установка активной роли методолога для возможности установить роль специалиста
+POST http://{{host}}:{{port}}/api/v1/user-profiles/set-active-role/
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+{
+  "activeRole": "METHODOLOGIST"
+}
+
+### Добавление роли специалиста и присвоение ей статуса активной
+PATCH http://{{host}}:{{port}}/api/v1/users/update-user-profile/
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+{
+  "userId": 9,
+  "lastName": "Ivanov",
+  "firstName": "Ivan",
+  "middleName": "Ivanovich",
+  "roles": ["MENTOR", "METHODOLOGIST", "SPECIALIST"],
+  "activeRole": "SPECIALIST",
+  "activeStatus": true,
+  "login": "specialist@mail.ru"
+}
+
+#### Создание менеджера
+
+### Регистрация нового пользователя
+POST http://{{host}}:{{port}}/api/v1/auth/register/
+Content-Type: application/json
+
+{
+  "email": "manager@mail.ru",
+  "password": "Admin123456!",
+  "firstName": "Petr",
+  "lastName": "Petrov",
+  "company": {
+    "companyTitle": "Company",
+    "inn": "100000000002"
+  }
+}
+
+### Аутентификация зарегистрированного пользователя
+POST http://{{host}}:{{port}}/api/v1/auth/login/
+Content-Type: application/json
+
+{
+  "login": "manager@mail.ru",
+  "password": "Admin123456!"
+}
+
+### Установка активной роли методолога для возможности установить роль менеджера
+POST http://{{host}}:{{port}}/api/v1/user-profiles/set-active-role/
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+{
+  "activeRole": "METHODOLOGIST"
+}
+
+### Добавление роли менеджера и присвоение ей статуса активной
+PATCH http://{{host}}:{{port}}/api/v1/users/update-user-profile/
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+{
+  "userId": 11,
+  "lastName": "Petrov",
+  "firstName": "Petr",
+  "middleName": "Petrovich",
+  "roles": ["MENTOR", "METHODOLOGIST", "MANAGER"],
+  "activeRole": "MANAGER",
+  "activeStatus": true,
+  "login": "manager@mail.ru"
+}
+
+##### КЕЙС №1 оставление успешной обратной связи о специалисте
+
+#### Менеджер оставляет отзыв о специалисте, отзыв должен отобразиться в списке отзывов специалиста
+
+### Аутентификация пользователя c активной ролью менеджера
+POST http://{{host}}:{{port}}/api/v1/auth/login/
+Content-Type: application/json
+
+{
+  "login": "manager@mail.ru",
+  "password": "Admin123456!"
+}
+
+### Добавление отзыва специалисту
+POST http://{{host}}:{{port}}/api/v1/feedback/9/
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+{
+  "message": "Новый отзыв"
+}
+
+### Проверка - получение всех отзывов о специалисте
+GET http://localhost:8080/api/v1/feedback/9/
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+##### КЕЙС №2 оставление отзыва неаутентифицированным пользователем
+
+#### Неаутентифицированный пользователь не может оставить отзыв, при попытке оставления отзыва система должна вернуть ошибочный ответ с кодом 401
+
+### Добавление отзыва специалисту - 401 ответ
+POST http://{{host}}:{{port}}/api/v1/feedback/9/
+Content-Type: application/json
+Authorization: Bearer angdterc
+
+{
+  "message": "Новый отзыв"
+}
+
+##### КЕЙС №3 оставление отзыва пользователeм, который не имеет активной роли “менеджер”
+
+#### Пользователь, который не имеет активной роли “менеджер”, не может оставить отзыв, при попытке оставления отзыва система должна вернуть ошибочный ответ с кодом 403
+
+### Аутентификация пользователя без наличия активной роли менеджера
+POST http://{{host}}:{{port}}/api/v1/auth/login/
+Content-Type: application/json
+
+{
+  "login": "specialist@mail.ru",
+  "password": "Admin123456!"
+}
+
+### Добавление отзыва специалисту - 403 ответ "Access denied: Доступ разрешен только для роли MANAGER"
+POST http://{{host}}:{{port}}/api/v1/feedback/9/
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+{
+  "message": "Новый отзыв"
+}
+
+##### КЕЙС №4 оставление отзыва в некорректном формате
+
+#### При попытке оставить пустой отзыв и отзыв, состоящий только из пробелов, система должна вернуть ошибочный ответ с кодом 400
+
+### Аутентификация пользователя c активной ролью менеджера
+POST http://{{host}}:{{port}}/api/v1/auth/login/
+Content-Type: application/json
+
+{
+  "login": "manager@mail.ru",
+  "password": "Admin123456!"
+}
+
+### Добавление отзыва специалисту - 400 ответ "Field 'message': Message should not consist only of spaces"
+POST http://{{host}}:{{port}}/api/v1/feedback/9/
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+{
+  "message": "   "
+}
+
+##### КЕЙС №5 оставление отзыва пользователем, который имеет роль “менеджер”, но она не является активной
+
+#### Пользователь, который имеет роль “менеджер”, но она не является активной, не может оставить отзыв, при попытке оставления отзыва система должна вернуть ошибочный ответ с кодом 403
+
+### Аутентификация пользователя c активной ролью менеджера
+POST http://{{host}}:{{port}}/api/v1/auth/login/
+Content-Type: application/json
+
+{
+  "login": "manager@mail.ru",
+  "password": "Admin123456!"
+}
+
+### Установка активной роли методолог
+POST http://{{host}}:{{port}}/api/v1/user-profiles/set-active-role/
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+{
+  "activeRole": "METHODOLOGIST"
+}
+
+### Добавление отзыва специалисту - 403 ответ "Access denied: Доступ разрешен только для роли MANAGER"
+POST http://{{host}}:{{port}}/api/v1/feedback/9/
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+{
+  "message": "Новый отзыв"
+}

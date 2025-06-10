@@ -1,0 +1,111 @@
+###### Работа с пользователем
+
+#### Кейс №1 - Создание пользователя
+
+#### Пользователь успешно регистрируется в системе, его профиль может быть просмотрен методологом
+
+### Регистрация нового пользователя
+POST http://{{host}}:{{port}}/api/v1/auth/register/
+Content-Type: application/json
+
+{
+  "email": "user@mail.ru",
+  "password": "Admin123456!",
+  "firstName": "User",
+  "lastName": "User",
+  "company": {
+    "companyTitle": "Company1",
+    "inn": "500000000001"
+  }
+}
+
+### Установка активной роли методолога
+POST http://{{host}}:{{port}}/api/v1/user-profiles/set-active-role/
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+{
+  "activeRole": "METHODOLOGIST"
+}
+
+### Аутентификация зарегистрированного пользователя
+POST http://{{host}}:{{port}}/api/v1/auth/login/
+Content-Type: application/json
+
+{
+  "login": "user@mail.ru",
+  "password": "Admin123456!"
+}
+
+### Получение данных созданного пользователя
+GET http://{{host}}:{{port}}/api/v1/users/10/
+Authorization: Bearer {{authToken}}
+Accept: application/json
+
+#### Кейс №2 - Добавление нового пользователя методологом
+
+#### Методолог может добавить нового пользователя в систему
+
+#### Создание нового пользователя методологом
+POST http://localhost:8080/api/v1/users/
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+{
+  "lastName": "Lastname",
+  "firstName": "Firstname",
+  "middleName": "Middlename",
+  "login": "mailuser1@test.com",
+  "activeStatus": true,
+  "activeRole": "SPECIALIST"
+}
+
+### Проверка - получение информации о пользователе
+GET http://{{host}}:{{port}}/api/v1/users/12/
+Authorization: Bearer {{authToken}}
+Accept: application/json
+
+#### Кейс №3 - Блокировка пользователя методологом
+
+#### Методолог может заблокировать другого пользователя
+
+### Блокировка пользователя методологом
+POST http://{{host}}:{{port}}/api/v1/users/12/block/
+Accept: application/json
+Authorization: Bearer {{authToken}}
+
+### Аутентификация заблокированным пользователем - получаем 401
+POST http://{{host}}:{{port}}/api/v1/auth/login/
+Content-Type: application/json
+
+{
+  "login": "@test.com",
+  "password": "Gk5^CBsi5"
+}
+
+#### Кейс №4 - Разблокировка пользователя методологом
+
+#### Методолог может разблокировать другого пользователя
+
+### Разблокировка пользователя методологом
+POST http://{{host}}:{{port}}/api/v1/users/12/unblock/
+Accept: application/json
+Authorization: Bearer {{authToken}}
+
+### Аутентификация заблокированным пользователем - получаем 200
+POST http://{{host}}:{{port}}/api/v1/auth/login/
+Content-Type: application/json
+
+{
+  "login": "mailuser1@test.com",
+  "password": "Gk5^CBsi5"
+}
+
+#### Кейс №5 - Получение списка пользователей
+
+#### Методолог может получить список всех пользователей
+
+### Получение списка пользователей
+GET http://{{host}}:{{port}}/api/v1/users/?pageNumber=1&countPerPage=10&sortBy=activeStatus&orderSort=asc&role=specialist
+Content-Type: application/json
+Authorization: Bearer {{authToken}}

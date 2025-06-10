@@ -1,0 +1,87 @@
+---
+- editUserProfileRq: null
+  valid: false
+  comment: Данные пользователя не могут являтся null
+- editUserProfileRq:
+    userId: 64f05f54-d38b-466e-af8d-c9f419b00b70
+    lastName:
+    firstName: Test
+    middleName: Test
+    roles:
+      - SPECIALIST
+    activeStatus: true
+    login: test@test.com
+    photo: null
+    dateOfBirth: null
+    workExperience: null
+  valid: false
+  comment: Фамилия должна быть указана
+- editUserProfileRq:
+    userId: 64f05f54-d38b-466e-af8d-c9f419b00b70
+    lastName: Test
+    firstName: Test
+    middleName: Test
+    roles:
+      - SPECIALIST
+    activeStatus: true
+    login: null
+    photo: null
+    dateOfBirth: null
+    workExperience: null
+  valid: false
+  comment: почта(логин) должна быть указана
+- editUserProfileRq:
+    userId: 64f05f54-d38b-466e-af8d-c9f419b00b70
+    lastName: Test
+    firstName: null
+    middleName: Test
+    roles:
+      - SPECIALIST
+    activeStatus: true
+    login: test@test.com
+    photo: null
+    dateOfBirth: null
+    workExperience: null
+  valid: false
+  comment: Имя должно быть указано
+- editUserProfileRq:
+    userId: 64f05f54-d38b-466e-af8d-c9f419b00b70
+    lastName: Test
+    firstName: null
+    middleName: Test
+    roles:
+    activeStatus: true
+    login: test@test.com
+    photo: null
+    dateOfBirth: null
+    workExperience: null
+  valid: false
+  comment: Набор ролей не может быть пустым
+- editUserProfileRq:
+    userId:
+    lastName: Test
+    firstName: Test
+    middleName: Test
+    roles:
+      - SPECIALIST
+    activeStatus: true
+    login: test@test.com
+    photo: null
+    dateOfBirth: null
+    workExperience: null
+  valid: false
+  comment: Идентификатор должен быть указан
+- editUserProfileRq:
+    userId: 64f05f54-d38b-466e-af8d-c9f419b00b70
+    lastName: Test
+    firstName: Test
+    middleName: Test
+    roles:
+      - SPECIALIST
+    activeStatus: true
+    login: test@test.com
+    photo: null
+    dateOfBirth: null
+    workExperience: null
+  valid: true
+  comment: Валидный объект

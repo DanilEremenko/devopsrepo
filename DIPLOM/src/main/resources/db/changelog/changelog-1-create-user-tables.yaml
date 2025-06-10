@@ -1,0 +1,240 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1-create-user-tables
+      author: Danil Eremenko
+      changes:
+        - createTable:
+            tableName: companies
+            columns:
+              - column:
+                  name: id
+                  type: UUID
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: name
+                  type: varchar
+                  constraints:
+                    nullable: false
+              - column:
+                  name: inn
+                  type: varchar
+                  constraints:
+                    nullable: false
+
+        - createTable:
+            tableName: user_profiles
+            columns:
+              - column:
+                  name: id
+                  type: UUID
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: photo_ref_id
+                  type: UUID
+              - column:
+                  name: date_of_birth
+                  type: timestamp
+              - column:
+                  name: work_experience
+                  type: varchar
+              - column:
+                  name: company_id
+                  type: UUID
+              - column:
+                  name: active_status
+                  type: boolean
+                  defaultValueBoolean: true
+              - column:
+                  name: user_id
+                  type: UUID
+
+        - createTable:
+            tableName: users
+            columns:
+              - column:
+                  name: id
+                  type: UUID
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: lastname
+                  type: varchar
+                  constraints:
+                    nullable: false
+              - column:
+                  name: firstname
+                  type: varchar
+                  constraints:
+                    nullable: false
+              - column:
+                  name: middlename
+                  type: varchar
+              - column:
+                  name: login
+                  type: varchar
+                  constraints:
+                    nullable: false
+
+        - createTable:
+            tableName: user_roles
+            columns:
+              - column:
+                  name: id
+                  type: UUID
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: user_id
+                  type: UUID
+                  constraints:
+                    nullable: false
+              - column:
+                  name: role_type
+                  type: varchar
+                  constraints:
+                    nullable: false
+
+        - createTable:
+            tableName: specialist_details
+            columns:
+              - column:
+                  name: id
+                  type: UUID
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: enabled
+                  type: boolean
+              - column:
+                  name: user_role_id
+                  type: UUID
+
+        - createTable:
+            tableName: manager_details
+            columns:
+              - column:
+                  name: id
+                  type: UUID
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: enabled
+                  type: boolean
+              - column:
+                  name: user_role_id
+                  type: UUID
+
+        - createTable:
+            tableName: mentor_details
+            columns:
+              - column:
+                  name: id
+                  type: UUID
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: enabled
+                  type: boolean
+              - column:
+                  name: user_role_id
+                  type: UUID
+
+        - createTable:
+            tableName: methodologist_details
+            columns:
+              - column:
+                  name: id
+                  type: UUID
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: enabled
+                  type: boolean
+              - column:
+                  name: is_duty_mentor
+                  type: boolean
+              - column:
+                  name: user_role_id
+                  type: UUID
+
+        - createTable:
+            tableName: files_ref
+            columns:
+              - column:
+                  name: id
+                  type: UUID
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: mime_type
+                  type: varchar
+                  constraints:
+                    nullable: false
+              - column:
+                  name: path
+                  type: varchar
+                  constraints:
+                    nullable: false
+
+  - changeSet:
+      id: 2-create-constraints
+      author: Danil Eremenko
+      changes:
+
+        - addForeignKeyConstraint:
+            baseTableName: user_profiles
+            baseColumnNames: company_id
+            referencedTableName: companies
+            referencedColumnNames: id
+            constraintName: fk_user_profiles_company
+
+        - addForeignKeyConstraint:
+            baseTableName: user_profiles
+            baseColumnNames: user_id
+            referencedTableName: users
+            referencedColumnNames: id
+            constraintName: fk_user_profiles_user
+
+        - addForeignKeyConstraint:
+            baseTableName: user_roles
+            baseColumnNames: user_id
+            referencedTableName: users
+            referencedColumnNames: id
+            constraintName: fk_user_roles_user
+
+        - addForeignKeyConstraint:
+            baseTableName: specialist_details
+            baseColumnNames: user_role_id
+            referencedTableName: user_roles
+            referencedColumnNames: id
+            constraintName: fk_specialist_details_user_role
+
+        - addForeignKeyConstraint:
+            baseTableName: methodologist_details
+            baseColumnNames: user_role_id
+            referencedTableName: user_roles
+            referencedColumnNames: id
+            constraintName: fk_methodologist_details_user_role
+
+        - addForeignKeyConstraint:
+            baseTableName: mentor_details
+            baseColumnNames: user_role_id
+            referencedTableName: user_roles
+            referencedColumnNames: id
+            constraintName: fk_mentor_details_user_role
+
+        - addForeignKeyConstraint:
+            baseTableName: manager_details
+            baseColumnNames: user_role_id
+            referencedTableName: user_roles
+            referencedColumnNames: id
+            constraintName: fk_manager_details_user_role
+
+        - addForeignKeyConstraint:
+            baseTableName: user_profiles
+            baseColumnNames: photo_ref_id
+            referencedTableName: files_ref
+            referencedColumnNames: id
+            constraintName: fk_user_profiles_photo_ref

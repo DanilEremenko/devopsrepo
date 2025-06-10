@@ -1,0 +1,52 @@
+---
+- addUserRq: null
+  valid: false
+  comment: Данные нового пользователя не могут являтся null
+- addUserRq:
+    lastName:
+    firstName: Test
+    middleName: Test
+    login: test@test.com
+    roles:
+      - SPECIALIST
+    activeStatus: true
+  valid: false
+  comment: Фамилия должна быть указана
+- addUserRq:
+    lastName: Test
+    firstName:
+    middleName: Test
+    login: test@test.com
+    roles:
+      - SPECIALIST
+    activeStatus: true
+  valid: false
+  comment: Имя должно быть указано
+- addUserRq:
+    lastName: Test
+    firstName:
+    middleName: Test
+    login: test@test.com
+    roles:
+      - SPECIALIST
+    activeStatus:
+  valid: false
+  comment: Активный статус должен быть указан
+- addUserRq:
+    lastName: Test
+    firstName: Test
+    middleName: Test
+    login: test@test.com
+    activeStatus: true
+  valid: false
+  comment: Роли для установки пользователю, должны быть указаны
+- addUserRq:
+    lastName: Test
+    firstName: Test
+    middleName: Test
+    login: test@test.com
+    roles:
+      - SPECIALIST
+    activeStatus: true
+  valid: true
+  comment: Валидный запрос

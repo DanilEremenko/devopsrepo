@@ -1,0 +1,17 @@
+databaseChangeLog:
+  - changeSet:
+      author: Danil Eremenko
+      id: add-keycloack-id-field-in-user-table
+      changes:
+        - addColumn:
+            tableName: users
+            columns:
+              - column:
+                  name: keycloak_id
+                  type: varchar
+                  constraints:
+                    nullable: true
+        - addUniqueConstraint:
+            tableName: users
+            columnNames: login
+            constraintName: uq_users_login

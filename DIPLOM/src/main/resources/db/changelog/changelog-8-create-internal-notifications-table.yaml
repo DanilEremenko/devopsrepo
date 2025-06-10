@@ -1,0 +1,61 @@
+databaseChangeLog:
+  - changeSet:
+      id: create-internal-notifications-table
+      author: Danil Eremenko
+      changes:
+        - createTable:
+            tableName: internal_notifications
+            columns:
+              - column:
+                  name: id
+                  type: UUID
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: initiator_id
+                  type: UUID
+                  constraints:
+                    nullable: false
+              - column:
+                  name: recipient_id
+                  type: UUID
+                  constraints:
+                    nullable: false
+              - column:
+                  name: creation_date_time
+                  type: datetime
+                  constraints:
+                    nullable: false
+              - column:
+                  name: message
+                  type: varchar
+                  constraints:
+                    nullable: false
+              - column:
+                  name: is_read
+                  type: boolean
+                  defaultValueBoolean: false
+                  constraints:
+                    nullable: false
+              - column:
+                  name: read_date_time
+                  type: datetime
+        - addForeignKeyConstraint:
+            baseTableName: internal_notifications
+            baseColumnNames: initiator_id
+            referencedTableName: users
+            referencedColumnNames: id
+            constraintName: fk_notifications_initiator_user
+        - addForeignKeyConstraint:
+            baseTableName: internal_notifications
+            baseColumnNames: recipient_id
+            referencedTableName: users
+            referencedColumnNames: id
+            constraintName: fk_notifications_recipient_user
+        - createIndex:
+            tableName: internal_notifications
+            indexName: idx_internal_notifications_recipient_id
+            columns:
+              - column:
+                  name: recipient_id

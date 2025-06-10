@@ -1,0 +1,19 @@
+databaseChangeLog:
+  - include:
+      file: db/changelog/changelog-1-create-user-tables.yaml
+  - include:
+      file: db/changelog/changelog-2-create-feedback-table.yaml
+  - include:
+      file: db/changelog/changelog-3-create-password-recovery-table.yaml
+  - include:
+      file: db/changelog/changelog-4-add-keycloack-id-field-in-user-table.yaml
+  - include:
+      file: db/changelog/changelog-5-add-active-role-id-field-in-user-profiles-table.yaml
+  - include:
+      file: db/changelog/changelog-6-add-registration-date-field-in-user-profiles-table.yaml
+  - include:
+      file: db/changelog/changelog-7-modify-files-ref-table.yaml
+  - include:
+      file: db/changelog/changelog-8-create-internal-notifications-table.yaml
+  - include:
+      file: db/changelog/changelog-9-add-file-specification-field-in-file-ref-table.yaml

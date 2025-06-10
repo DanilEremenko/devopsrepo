@@ -1,0 +1,15 @@
+---
+- internalNotificationsListRq:
+    pageNumber: 1
+    countPerPage: 10
+  valid: true
+  comment: Все параметры запроса указаны верно, запрос валидный
+- internalNotificationsListRq:
+    pageNumber: 1
+  valid: true
+  comment: Параметры не являются обязательными, запрос валидный
+- internalNotificationsListRq:
+    pageNumber: 0
+    countPerPage: 0
+  valid: false
+  comment: Параметры указаны некорректно (минимальное значение 1), запрос невалидный

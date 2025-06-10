@@ -1,0 +1,18 @@
+databaseChangeLog:
+  - changeSet:
+      id: add-registration-date-field-in-user-profiles-table
+      author: Danil Eremenko
+      changes:
+        - addColumn:
+            tableName: user_profiles
+            columns:
+              - column:
+                  name: registration_date
+                  type: timestamp
+                  constraints:
+                    nullable: false
+              - column:
+                  name: update_date
+                  type: timestamp
+                  constraints:
+                    nullable: false

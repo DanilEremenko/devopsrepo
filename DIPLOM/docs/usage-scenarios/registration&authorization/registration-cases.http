@@ -1,0 +1,89 @@
+###### Сценарий - регистрация пользователя
+
+##### КЕЙС №1 успешная регистрация пользователя
+
+#### Пользователь вводит корректные данные и регистрируется в системе
+
+### Регистрация нового пользователя
+POST http://{{host}}:{{port}}/api/v1/auth/register/
+Content-Type: application/json
+
+{
+  "email": "register@mail.ru",
+  "password": "Admin123456!",
+  "firstName": "Ivan",
+  "lastName": "Ivanov",
+  "company": {
+    "companyTitle": "Company",
+    "inn": "100000000001"
+  }
+}
+
+### Проверка - успешная аутентификация зарегистрированного пользователя
+POST http://{{host}}:{{port}}/api/v1/auth/login/
+Content-Type: application/json
+
+{
+  "login": "register@mail.ru",
+  "password": "Admin123456!"
+}
+
+##### КЕЙС №2 регистрация пользователя с некорректным значением электронной почты
+
+#### Электронная почта пользователя должна быть уникальной в рамках системы, при попытке зарегистрировать пользователя
+#### с уже имеющимся в системе значением электронной почты система должна вернуть ошибочный ответ с кодом 400
+
+### Регистрация нового пользователя - 400 ответ "User with this email already exists: register@mail.ru"
+POST http://{{host}}:{{port}}/api/v1/auth/register/
+Content-Type: application/json
+
+{
+  "email": "register@mail.ru",
+  "password": "Admin123456!",
+  "firstName": "Ivan",
+  "lastName": "Ivanov",
+  "company": {
+    "companyTitle": "Company",
+    "inn": "100000000002"
+  }
+}
+
+##### КЕЙС №3 регистрация пользователя с некорректным значением ИНН
+
+#### ИНН компании пользователя должна быть уникальным в рамках системы, при попытке зарегистрировать пользователя
+#### с уже имеющимся в системе значением ИНН система должна вернуть ошибочный ответ с кодом 400
+
+### Регистрация нового пользователя - 400 ответ "Company with INN 100000000001 already exists."
+POST http://{{host}}:{{port}}/api/v1/auth/register/
+Content-Type: application/json
+
+{
+  "email": "register1@mail.ru",
+  "password": "Admin123456!",
+  "firstName": "Ivan",
+  "lastName": "Ivanov",
+  "company": {
+    "companyTitle": "Company",
+    "inn": "100000000001"
+  }
+}
+
+##### КЕЙС №4 регистрация пользователя с невалидным значением электронной почты
+
+#### Электронная почта пользователя должна соответствовать формату email, при попытке зарегистрировать пользователя
+#### со значением электронной почты, не соответствующим формату, система должна вернуть ошибочный ответ с кодом 400
+
+### Регистрация нового пользователя - 400 ответ "Field 'email': Email must be valid and less than 50 characters."
+POST http://{{host}}:{{port}}/api/v1/auth/register/
+Content-Type: application/json
+
+{
+  "email": "registermail.ru",
+  "password": "Admin123456!",
+  "firstName": "Ivan",
+  "lastName": "Ivanov",
+  "company": {
+    "companyTitle": "Company",
+    "inn": "100000000001"
+  }
+}
