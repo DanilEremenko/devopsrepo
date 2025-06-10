@@ -1,0 +1,86 @@
+services:
+  backend:
+    build: https://github.com/DanilEremenko/diplom-backend
+    ports:
+      - "8081:8080"
+    depends_on:
+      - be-better-db
+      - keycloak-db
+      - keycloak
+      - mailhog
+      - minio
+      - rabbitmq
+    env_file:
+      - .env
+  frontend:
+    build: https://github.com/DanilEremenko/diplom-frontend
+    ports:
+      - "8080:8080"
+    depends_on:
+      - backend
+  be-better-db:
+    image: postgres:17.5
+    ports:
+      - "${DB_PORT_EXTERNAL}:${DB_PORT_INTERNAL}"
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
+    volumes:
+      - "${DB_VOLUME}:/var/lib/postgresql/data"
+  keycloak-db:
+    image: postgres:17.5
+    ports:
+      - "${KEYCLOAK_DB_PORT_EXTERNAL}:${KEYCLOAK_DB_PORT_INTERNAL}"
+    environment:
+      POSTGRES_USER: ${KEYCLOAK_DB_USER}
+      POSTGRES_PASSWORD: ${KEYCLOAK_DB_PASSWORD}
+      POSTGRES_DB: ${KEYCLOAK_DB_NAME}
+    volumes:
+      - "${KEYCLOAK_DB_VOLUME}:/var/lib/postgresql/data"
+  keycloak:
+    image: keycloak/keycloak:26.0.4
+    environment:
+      KEYCLOAK_ADMIN: ${KEYCLOAK_ADMIN}
+      KEYCLOAK_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD}
+      KC_DB: postgres
+      KC_DB_URL: jdbc:postgresql://keycloak-db:${KEYCLOAK_DB_PORT_INTERNAL}/${KEYCLOAK_DB_NAME}
+      KC_DB_USERNAME: ${KEYCLOAK_DB_USER}
+      KC_DB_PASSWORD: ${KEYCLOAK_DB_PASSWORD}
+    depends_on:
+      - "keycloak-db"
+    volumes:
+      - "${KEYCLOAK_IMPORT_PATH}:/opt/keycloak/data/import"
+    ports:
+      - "${KEYCLOAK_PORT_EXTERNAL}:${KEYCLOAK_PORT_INTERNAL}"
+    command: ${KEYCLOAK_PROFILE} --import-realm
+  mailhog:
+    image: mailhog/mailhog:v1.0.1
+    ports:
+      - "${SMTP_PORT}:${SMTP_PORT}"
+      - "${SMTP_UI_PORT}:${SMTP_UI_PORT}"
+  minio:
+    image: minio/minio:RELEASE.2024-11-07T00-52-20Z
+    ports:
+      - "${MINIO_API_PORT}:${MINIO_API_PORT}"
+      - "${MINIO_WEBUI_PORT}:${MINIO_WEBUI_PORT}"
+    volumes:
+      - ${MINIO_VOLUME}:/data
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
+    command: server --console-address ":9001" /data
+
+  rabbitmq:
+    image: rabbitmq:4.0.3-management-alpine
+    ports:
+      - "${BROKER_PORT}:${BROKER_PORT}"
+      - "${BROKER_UI_PORT}:${BROKER_UI_PORT}"
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASSWORD}
+
+volumes:
+  db-data:
+  keycloak-data:
+  minio-data:
