@@ -57,11 +57,13 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(List.of("http://localhost:3000",
-                "http://localhost",
-                "http://localhost:8080",
+        configuration.setAllowedOrigins(List.of(
+                "http://be-better-module.ru:8080",
+                "https://be-better-module.ru:8080",
                 "https://be-better-module.ru",
-                "http://be-better-module.ru" ));
+                "http://be-better-module.ru",
+                "http://91.105.199.248:8080",
+                "https://91.105.199.248:8080"));
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(List.of("*"));
         configuration.setAllowCredentials(true);
