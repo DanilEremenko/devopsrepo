@@ -1,42 +1,33 @@
 import React, { useState, useEffect } from 'react';
-import { Button, Input, Upload, message } from 'antd';
+import { Button, Input, message, Form, Row, Col } from 'antd';
 import axiosClient from '../api/AxiosClient';
-import '../styles/ProfileModal.css';
 import { useNavigate } from "react-router-dom";
-
+import '../styles/ProfileModal.css';
 
 const { TextArea } = Input;
 
-
 const ProfileModal = ({ visible, onClose, onOpenChangePhoto, profilePhoto, onPhotoChange, setUserInitials }) => {
-    const [profileData, setProfileData] = useState({
-        lastName: '',
-        firstName: '',
-        middleName: '',
-        login: '',
-        dateOfBirth: '',
-        workExperience: '',
-        photoGuid: '',
-    });
-
+    const [form] = Form.useForm();
+    const [loading, setLoading] = useState(false);
     const [localPhotoUrl, setLocalPhotoUrl] = useState(null);
     const navigate = useNavigate();
 
     useEffect(() => {
         if (!visible) return;
 
+        setLoading(true);
         axiosClient.get('/user-profiles/')
             .then((response) => {
                 const data = response.data;
+                const formattedDate = data.dateOfBirth ? data.dateOfBirth.split('-').reverse().join('.') : '';
 
-                setProfileData({
+                form.setFieldsValue({
                     lastName: data.lastName || '',
                     firstName: data.firstName || '',
                     middleName: data.middleName || '',
                     login: data.login || '',
-                    dateOfBirth: data.dateOfBirth ? data.dateOfBirth.split('-').reverse().join('.') : '',
-                    workExperience: data.workExperience || '',
-                    photoGuid: data.photo?.guid || '',
+                    dateOfBirth: formattedDate,
+                    workExperience: data.workExperience || ''
                 });
 
                 setUserInitials(data.firstName, data.lastName);
@@ -44,103 +35,145 @@ const ProfileModal = ({ visible, onClose, onOpenChangePhoto, profilePhoto, onPho
                 if (data.photo?.guid) {
                     axiosClient.get(`/files/${data.photo.guid}/`)
                         .then((photoResponse) => {
-                            const photoUrl = photoResponse.data.reference;
-                            setLocalPhotoUrl(photoUrl);
-                            onPhotoChange(photoUrl);
+                            setLocalPhotoUrl(photoResponse.data.reference);
+                            onPhotoChange(photoResponse.data.reference);
                             localStorage.removeItem('pendingProfilePhoto');
                         })
-                        .catch(() => {
-                            message.warning('Не удалось загрузить фотографию');
-                        });
+                        .catch(() => message.warning('Не удалось загрузить фотографию'));
                 } else {
                     const cached = localStorage.getItem('pendingProfilePhoto');
                     if (cached) {
                         setLocalPhotoUrl(cached);
                         onPhotoChange(cached);
-                    } else {
-                        setLocalPhotoUrl(null);
-                        onPhotoChange(null);
                     }
                 }
             })
-            .catch(() => {
-                message.error('Не удалось загрузить данные профиля');
-            });
-    }, [visible]);
+            .catch(() => message.error('Не удалось загрузить данные профиля'))
+            .finally(() => setLoading(false));
+    }, [visible, form]);
 
-    const handleChange = (field) => (e) => {
-        setProfileData((prev) => ({ ...prev, [field]: e.target.value }));
-    };
+    const handleSave = async () => {
+        try {
+            const values = await form.validateFields();
+            const updatedData = { ...values };
 
-    const handleSave = () => {
-        const updatedData = { ...profileData };
+            if (updatedData.dateOfBirth) {
+                updatedData.dateOfBirth = updatedData.dateOfBirth.replace(/(\d{2})\.(\d{2})\.(\d{4})/, '$3-$2-$1');
+            }
 
-        if (updatedData.dateOfBirth) {
-            updatedData.dateOfBirth = updatedData.dateOfBirth.replace(/(\d{2})\.(\d{2})\.(\d{4})/, '$3-$2-$1');
+            await axiosClient.post('/user-profiles/update-user-profile/', updatedData);
+            message.success('Профиль успешно обновлён');
+            onClose();
+        } catch (error) {
+            message.error('Не удалось сохранить профиль');
         }
-
-        axiosClient.post('/user-profiles/update-user-profile/', updatedData)
-            .then(() => {
-                message.success('Профиль успешно обновлён');
-                onClose();
-            })
-            .catch(() => {
-                message.error('Не удалось сохранить профиль');
-            });
     };
 
     if (!visible) return null;
 
-    const initials = `${profileData.firstName?.[0] || ''}${profileData.lastName?.[0] || ''}`.toUpperCase();
+    const initials = `${form.getFieldValue('firstName')?.[0] || ''}${form.getFieldValue('lastName')?.[0] || ''}`.toUpperCase();
 
     return (
-        <div className="profile-modal">
-            <div className="profile-avatar-container">
-                {localPhotoUrl ? (
-                    <img src={localPhotoUrl} alt="Profile" className="profile-avatar" />
-                ) : (
-                    <div className="profile-avatar-fallback">{initials}</div>
-                )}
-                <Upload beforeUpload={() => false} showUploadList={false}>
-                    <Button className="change-photo-button" onClick={onOpenChangePhoto}>
-                        Изменить фото
-                    </Button>
-                </Upload>
+        <div className="profile-modal-overlay">
+            <div className="profile-modal">
+                <button className="close-button" onClick={onClose}>×</button>
+
+                <div className="profile-content">
+                    <div className="avatar-section">
+                        {localPhotoUrl ? (
+                            <img src={localPhotoUrl} alt="Profile" className="profile-avatar" />
+                        ) : (
+                            <div className="profile-avatar-fallback">{initials}</div>
+                        )}
+                            <Button
+                                variant="outlined"
+                                color="primary"
+                                className="change-photo-button"
+                                onClick={onOpenChangePhoto}
+                            >
+                                Изменить фото
+                            </Button>
+                    </div>
+
+                    <Form form={form} layout="vertical" className="profile-form">
+                        <Row gutter={16}>
+                            <Col span={12}>
+                                <Form.Item
+                                    name="lastName"
+                                    label="Фамилия"
+                                    rules={[{ required: true, message: 'Пожалуйста, введите фамилию' }]}
+                                >
+                                    <Input placeholder="Введите фамилию" disabled={true}/>
+                                </Form.Item>
+                            </Col>
+                            <Col span={12}>
+                                <Form.Item
+                                    name="dateOfBirth"
+                                    label="Дата рождения"
+                                    rules={[{ required: true, message: 'Пожалуйста, введите дату рождения' }]}
+                                >
+                                    <Input placeholder="ДД.ММ.ГГГГ" />
+                                </Form.Item>
+                            </Col>
+                        </Row>
+
+                        <Row gutter={16}>
+                            <Col span={12}>
+                                <Form.Item
+                                    name="firstName"
+                                    label="Имя"
+                                    rules={[{ required: true, message: 'Пожалуйста, введите имя' }]}
+                                >
+                                    <Input placeholder="Введите имя" disabled={true}/>
+                                </Form.Item>
+                            </Col>
+                            <Col span={12}>
+                                <Form.Item
+                                    name="login"
+                                    label="Логин"
+                                    rules={[{ required: true, message: 'Пожалуйста, введите логин' }]}
+                                >
+                                    <Input placeholder="Введите логин" disabled={true}/>
+                                </Form.Item>
+                            </Col>
+                        </Row>
+
+                        <Row gutter={16}>
+                            <Col span={24}>
+                                <Form.Item name="middleName" label="Отчество">
+                                    <Input placeholder="Введите отчество" />
+                                </Form.Item>
+                            </Col>
+                        </Row>
+
+                        <Row gutter={16}>
+                            <Col span={24}>
+                                <Form.Item
+                                    name="workExperience"
+                                    label="Опыт работы"
+                                    rules={[{ required: true, message: 'Пожалуйста, укажите опыт работы' }]}
+                                >
+                                    <TextArea rows={6} placeholder="Опишите ваш опыт работы" />
+                                </Form.Item>
+                            </Col>
+                        </Row>
+
+                        <Row gutter={16}>
+                            <Col span={24} style={{ textAlign: 'left' }}>
+                                <Button
+                                    variant="outlined"
+                                    color="primary"
+                                    onClick={handleSave}
+                                    loading={loading}
+                                    className="save-button"
+                                >
+                                    Сохранить
+                                </Button>
+                            </Col>
+                        </Row>
+                    </Form>
+                </div>
             </div>
-
-            <div className="profile-field-container surname">
-                <label>Фамилия <span className="required-star">*</span></label>
-                <Input value={profileData.lastName} onChange={handleChange('lastName')} />
-            </div>
-
-            <div className="profile-field-container birthdate">
-                <label>Дата рождения <span className="required-star">*</span></label>
-                <Input value={profileData.dateOfBirth} onChange={handleChange('dateOfBirth')} />
-            </div>
-
-            <div className="profile-field-container name">
-                <label>Имя <span className="required-star">*</span></label>
-                <Input value={profileData.firstName} onChange={handleChange('firstName')} />
-            </div>
-
-            <div className="profile-field-container login">
-                <label>Логин <span className="required-star">*</span></label>
-                <Input value={profileData.login} onChange={handleChange('login')} />
-            </div>
-
-            <div className="profile-field-container patronymic">
-                <label>Отчество</label>
-                <Input value={profileData.middleName} onChange={handleChange('middleName')} />
-            </div>
-
-            <Button className="change-password-button" onClick={()=>navigate("/change-password")}>Сменить пароль</Button>
-
-            <div className="work-experience-container">
-                <label>Опыт работы <span className="required-star">*</span></label>
-                <TextArea value={profileData.workExperience} onChange={handleChange('workExperience')} />
-            </div>
-
-            <Button className="save-button" onClick={handleSave}>Сохранить</Button>
         </div>
     );
 };

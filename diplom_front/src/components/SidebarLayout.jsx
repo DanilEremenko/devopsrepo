@@ -29,11 +29,7 @@ const SidebarLayout = ({ children }) => {
                     </div>
                 </div>
             </Sider>
-            <Layout className={styles.contentLayout}>
-                <Content className={styles.contentWrapper}>
-                    <img src={background} alt="Background" className={styles.backgroundImg} />
-                </Content>
-            </Layout>
+            <img src={background} alt="Background" className={styles.backgroundImg} />
         </Layout>
     );
 };

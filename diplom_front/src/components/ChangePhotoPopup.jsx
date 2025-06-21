@@ -63,6 +63,7 @@ const ChangePhotoPopup = ({ visible, onOk, onCancel, onPhotoChange }) => {
     };
 
     return (
+        <div className="change-photo-overlay">
         <div className="change-photo-popup">
             <div className="change-photo-title">Изменение фотографии профиля</div>
             <div className="photo-upload-area" onClick={handleUploadClick}>
@@ -84,7 +85,8 @@ const ChangePhotoPopup = ({ visible, onOk, onCancel, onPhotoChange }) => {
                 onChange={handleFileChange}
             />
             <Button className="cancel-button" onClick={handleCancel}>Отмена</Button>
-            <Button className="confirm-button" onClick={handleConfirm}>Подтвердить</Button>
+            <Button color='primary' type='primary' className="confirm-button" onClick={handleConfirm}>Подтвердить</Button>
+        </div>
         </div>
     );
 };

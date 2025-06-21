@@ -65,6 +65,7 @@ const UsersTable = ({ users, loading, currentPage, totalItems, onPageChange, onU
                 showSizeChanger: false,
             }}
             loading={loading}
+            scroll={{ x: 850 }}
         />
     );
 };

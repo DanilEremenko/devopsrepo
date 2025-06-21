@@ -142,8 +142,6 @@ const MethodologistDashboard = () => {
     return (
         <div className="users-content">
             <h1 className="users-title">Пользователи</h1>
-
-            <div className="filter-container">
                 <div className="filter-label">Фильтр</div>
                 <div className="filter-row">
                     <input
@@ -165,8 +163,6 @@ const MethodologistDashboard = () => {
                     </select>
                     <button className="filter-button" onClick={() => fetchUsers(1)}>Найти</button>
                 </div>
-            </div>
-
 
             <button className="add-user-button" onClick={handleOpenAddUserModal}>
                 Добавить пользователя

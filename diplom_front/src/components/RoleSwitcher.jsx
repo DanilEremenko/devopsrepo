@@ -1,20 +1,19 @@
 import React, { useEffect, useState } from 'react';
+import {
+    UserOutlined,
+    UserSwitchOutlined,
+    TeamOutlined,
+    SolutionOutlined,
+} from '@ant-design/icons';
+import { Tooltip } from 'antd';
 import axiosClient from '../api/AxiosClient';
-import specialistGray from '../assets/specialistGray.svg';
-import specialistBlue from '../assets/specialistBlue.svg';
-import methodologistGray from '../assets/methodologistGray.svg';
-import methodologistBlue from '../assets/methodologistBlue.svg';
-import mentorGray from '../assets/mentorGray.svg';
-import mentorBlue from '../assets/mentorBlue.svg';
-import managerGray from '../assets/managerGray.svg';
-import managerBlue from '../assets/managerBlue.svg';
 import '../styles/RoleSwitcher.css';
 
 const rolesConfig = [
-    { name: 'SPECIALIST', grayIcon: specialistGray, blueIcon: specialistBlue },
-    { name: 'METHODOLOGIST', grayIcon: methodologistGray, blueIcon: methodologistBlue },
-    { name: 'MENTOR', grayIcon: mentorGray, blueIcon: mentorBlue },
-    { name: 'MANAGER', grayIcon: managerGray, blueIcon: managerBlue },
+    { name: 'SPECIALIST', Icon: UserOutlined, tooltip: 'Специалист' },
+    { name: 'METHODOLOGIST', Icon: UserSwitchOutlined, tooltip: 'Методолог' },
+    { name: 'MENTOR', Icon: TeamOutlined, tooltip: 'Ментор' },
+    { name: 'MANAGER', Icon: SolutionOutlined, tooltip: 'Менеджер' },
 ];
 
 const RoleSwitcher = ({ onRoleChange }) => {
@@ -32,8 +31,6 @@ const RoleSwitcher = ({ onRoleChange }) => {
                     setAvailableRoles(userRoles);
                     setActiveRole(initialRole);
                     onRoleChange?.(initialRole);
-                } else {
-                    console.warn('Нет доступных ролей для пользователя');
                 }
             } catch (error) {
                 console.error('Ошибка при получении текущего пользователя:', error);
@@ -44,8 +41,7 @@ const RoleSwitcher = ({ onRoleChange }) => {
     }, []);
 
     const handleRoleChange = async (newRole) => {
-        if (!availableRoles.includes(newRole)) return;
-        if (newRole === activeRole) return;
+        if (!availableRoles.includes(newRole) || newRole === activeRole) return;
 
         try {
             await axiosClient.post('/user-profiles/set-active-role/', { activeRole: newRole });
@@ -59,19 +55,26 @@ const RoleSwitcher = ({ onRoleChange }) => {
 
     return (
         <div className="role-switcher">
-            {rolesConfig.map((role) => (
-                <div
-                    key={role.name}
-                    className={`role-item ${activeRole === role.name ? 'active' : 'inactive'}`}
-                    onClick={() => availableRoles.includes(role.name) && handleRoleChange(role.name)}
-                >
-                    <img
-                        src={activeRole === role.name ? role.blueIcon : role.grayIcon}
-                        alt={role.name}
-                        className="role-icon"
-                    />
-                </div>
-            ))}
+            {rolesConfig.map(({ name, Icon, tooltip }, index) => {
+                const isDisabled = index === 0 || index === rolesConfig.length - 1;
+                const isActive = activeRole === name;
+                const color = isActive ? '#1890ff' : '#bfbfbf';
+
+                return (
+                    <Tooltip title={tooltip} key={tooltip}>
+                        <div
+                            className={`role-item ${isActive ? 'active' : 'inactive'} ${isDisabled ? 'disabled' : ''}`}
+                            onClick={() => {
+                                if (!isDisabled && availableRoles.includes(name)) {
+                                    handleRoleChange(name);
+                                }
+                            }}
+                        >
+                            <Icon style={{ fontSize: 28, color }} />
+                        </div>
+                    </Tooltip>
+                );
+            })}
         </div>
     );
 };

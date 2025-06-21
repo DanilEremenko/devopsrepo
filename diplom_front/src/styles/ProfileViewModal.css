@@ -1,248 +1,51 @@
-
-.profile-modal {
-    position: fixed;
-    width: 1180px;
-    height: 800px;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background: #FFFFFF;
-    border-radius: 10px;
-    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
-    padding: 20px;
-    z-index: 1000;
-}
-
-
-.profile-avatar-container {
-    position: relative;
-}
-
-.profile-avatar {
-    position: absolute;
-    width: 180px;
-    height: 180px;
-    top: 30px;
-    left: 100px;
-    border-radius: 50%;
-    object-fit: cover;
-    display: block;
-}
-
-
-.profile-field-container {
-    position: absolute;
-}
-
-.profile-field-container.surname {
-    top: 92px;
-    left: 400px;
-}
-
-.profile-field-container.birthdate {
-    top: 92px;
-    left: 700px;
-}
-
-.profile-field-container.name {
-    top: 188px;
-    left: 400px;
-}
-
-.profile-field-container.login {
-    top: 188px;
-    left: 700px;
-}
-
-.profile-field-container.patronymic {
-    top: 284px;
-    left: 400px;
-}
-
-
-.work-experience-container {
-    position: absolute;
-    width: 450px;
-    height: 150px;
-    top: 380px;
-    left: 400px;
-}
-
-.work-experience-label {
-    font-family: 'Roboto', sans-serif;
-    font-size: 14px;
-    color: #2E2E2E;
-    margin-bottom: 4px;
-}
-
-.work-experience-textarea {
-    position: absolute;
-    width: 579px;
-    height: 241px;
-    background: #FCFCFC;
-    border: 1.5px solid #EBEBEB;
-    border-radius: 8px;
-    font-family: 'Roboto', sans-serif;
-    font-size: 14px;
-    line-height: 16px;
-    letter-spacing: 0.2px;
-    color: black;
-    padding: 8px 16px;
-    resize: none;
-}
-
-.profile-roles-container {
-    position: absolute;
-    top: 500px;
-    left: 400px;
-    width: 400px;
-}
-
-.profile-roles-label {
-    font-family: 'Roboto', sans-serif;
-    font-size: 14px;
-    color: #2E2E2E;
-    margin-bottom: 4px;
-    display: block;
-}
-
-.feedback-section {
-    position: absolute;
-    top: 550px;
-    left: 400px;
-}
-
-.feedback-button {
-    display: block;
-    margin-top: 8px;
-    padding: 6px 12px;
-    border: 1px solid #4EACE8;
-    border-radius: 20px;
-    background: transparent;
-    color: #4EACE8;
-    font-size: 14px;
-    cursor: pointer;
-    font-family: 'Roboto', sans-serif;
-}
-
-.profile-avatar-fallback {
-    position: absolute;
-    width: 180px;
-    height: 180px;
-    top: 30px;
-    left: 100px;
-    border-radius: 50%;
-    background-color: #1890ff;
-    color: white;
-    font-size: 48px;
-    font-weight: bold;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-family: 'Roboto', sans-serif;
-    user-select: none;
-}
-
-.close-button {
-    position: absolute;
-    top: 16px;
-    right: 16px;
-    background: transparent;
-    border: none;
-    cursor: pointer;
-    font-size: 18px;
-    color: #333;
-    font-weight: bold;
-    z-index: 1001;
-    padding: 0;
-    line-height: 1;
-}
-
-.close-button:hover {
-    color: #000;
-}
-
-.textarea-wrapper {
-    position: relative;
-}
-
-.edit-icon {
-    position: absolute;
-    top: 4px;
-    right: 4px;
-    width: 20px;
-    height: 20px;
-    cursor: pointer;
-}
-
-.feedback-section {
-    position: absolute;
-    top: 630px;
-    left: 400px;
-    width: 580px;
-    font-family: 'Roboto', sans-serif;
-}
-
-.feedback-list {
-    max-height: 95px;
-    overflow-y: auto;
-    margin-bottom: 12px;
-    padding-right: 4px;
-}
-
-.feedback-card {
-    background-color: #FCFCFC;
-    border: 1.5px solid #EBEBEB;
-    border-radius: 8px;
-    padding: 10px 14px;
-    margin-bottom: 8px;
-    font-size: 14px;
-    color: #2E2E2E;
-    line-height: 15px;
-}
-
-.feedback-meta {
+.roles-container {
     display: flex;
     justify-content: space-between;
-    margin-bottom: 6px;
-    font-weight: bold;
+    align-items: flex-start;
+    border: 1px solid #d9d9d9;
+    border-radius: 8px;
+    padding: 12px;
+    background-color: #FCFCFC;
+    min-height: 60px;
 }
 
-.feedback-author {
-    color: #1890ff;
+.roles-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    flex-grow: 1;
 }
 
-.feedback-date {
-    color: #999;
-    font-size: 12px;
-}
-
-.feedback-message {
-    white-space: pre-wrap;
-}
-
-.modal-btn {
-    padding: 8px 16px;
+.role-tag {
+    margin-right: 0;
+    padding: 4px 8px;
     font-size: 14px;
     border-radius: 4px;
-    border: 1px solid;
-    cursor: pointer;
-    transition: all 0.2s ease-in-out;
-
-    &.cancel {
-        color: #464646;
-        border-color: #757575;
-        border-radius: 20px;
-        background: transparent;
-
-    }
-
-    &.save {
-        background-color: white;
-        color: #4EACE8;
-        border-color: #4EACE8;
-        border-radius: 20px;
-
-    }
 }
 
+.no-roles-text {
+    color: #8c8c8c;
+    font-style: italic;
+}
+
+.edit-roles-button {
+    color: #1890ff;
+    margin-left: 8px;
+}
+
+.edit-roles-button:hover {
+    color: #40a9ff;
+}
+
+/* Адаптивные стили */
+@media (max-width: 768px) {
+    .roles-container {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .edit-roles-button {
+        align-self: flex-end;
+        margin-top: 8px;
+    }
+}

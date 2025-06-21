@@ -1,5 +1,5 @@
 .layout {
-    min-height: 100vh;
+
 }
 
 .customSidebar {
@@ -15,6 +15,16 @@
     display: flex;
     flex-direction: column;
     overflow: hidden;
+}
+
+.backgroundImg {
+    position: absolute;
+    top: 0;
+    right: 0;
+    height: 100vh;
+    object-fit: cover;
+    max-width: calc(100vw - 400px);
+    z-index: 1;
 }
 
 .sidebarWrapper {
@@ -40,6 +50,7 @@
     justify-content: flex-start;
     padding: 0 4px;
     overflow: hidden;
+    align-items: center;
 }
 
 .sidebarFooter {
@@ -50,7 +61,6 @@
 
 
 .contentWrapper {
-    margin-left: 400px;
     background-color: #f7f9fc;
     min-height: 100vh;
     overflow: hidden;
@@ -84,19 +94,11 @@
     .customSidebar {
         width: 340px;
     }
-
-    .contentWrapper {
-        margin-left: 340px;
-    }
 }
 
 @media (max-width: 1440px) {
     .customSidebar {
         width: 300px;
-    }
-
-    .contentWrapper {
-        margin-left: 300px;
     }
 
     .logoImg {
@@ -107,10 +109,6 @@
 @media (max-width: 1366px) {
     .customSidebar {
         width: 280px;
-    }
-
-    .contentWrapper {
-        margin-left: 280px;
     }
 
     .logoImg {

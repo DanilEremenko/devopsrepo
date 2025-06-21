@@ -1,3 +1,7 @@
+body{
+  margin:0;
+}
+
 .formHeader {
   text-align: center;
   margin-bottom: 12px;
@@ -17,6 +21,7 @@
 
 .registrationForm {
   padding: 0 16px;
+  overflow: auto;
 }
 
 .inputCustom {
