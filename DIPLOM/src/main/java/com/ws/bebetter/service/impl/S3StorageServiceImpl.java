@@ -89,11 +89,10 @@ public class S3StorageServiceImpl implements S3StorageService {
 
     @Override
     public StorageRefDto getFile(UUID guid) {
-        FileRef fileRef = fileRefRepository.findById(guid).orElseThrow(() ->
-                new NotFoundException("Файл не найден: " + guid));
+        FileRef fileRef = fileRefRepository.findById(guid)
+                .orElseThrow(() -> new NotFoundException("Файл не найден: " + guid));
 
-        try (minioClient) {
-
+        try {
             String urlReference = minioClient.getPresignedObjectUrl(
                     GetPresignedObjectUrlArgs.builder()
                             .method(Method.GET)
@@ -105,13 +104,13 @@ public class S3StorageServiceImpl implements S3StorageService {
             return StorageRefDto.builder()
                     .reference(urlReference)
                     .build();
-
         } catch (MinioException e) {
             throw new RuntimeException("Ошибка при получении файла в файловом сервисе: " + e.getMessage(), e);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
+
 
     private FileSpecification getFileSpecification(MultipartFile file) {
         return Objects.requireNonNull(file.getContentType())

@@ -366,7 +366,9 @@ public class UserServiceImpl implements UserService {
                 .firstName(user.getFirstname())
                 .middleName(user.getMiddlename())
                 .roles(user.getUserRoles().stream().map(userRoleMapper::buildUserRoleDto).collect(Collectors.toSet()))
-                .activeRole(userRoleMapper.buildUserRoleDto(userProfile.getActiveRole()))
+                .activeRole(userProfile.getActiveRole() != null ?
+                        userRoleMapper.buildUserRoleDto(userProfile.getActiveRole())
+                        : userRoleMapper.buildUserRoleDto(user.getUserRoles().iterator().next()))
                 .activeStatus(userProfile.getActiveStatus())
                 .login(user.getLogin())
                 .photo(fileRefMapper.toDto(userProfile.getPhoto()))

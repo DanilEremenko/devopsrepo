@@ -51,6 +51,7 @@ services:
       KC_DB_URL: jdbc:postgresql://keycloak-db:${KEYCLOAK_DB_PORT_INTERNAL}/${KEYCLOAK_DB_NAME}
       KC_DB_USERNAME: ${KEYCLOAK_DB_USER}
       KC_DB_PASSWORD: ${KEYCLOAK_DB_PASSWORD}
+      KC_HTTP_ENABLED: true
     depends_on:
       - "keycloak-db"
     volumes:

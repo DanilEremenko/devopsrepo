@@ -297,6 +297,7 @@ const ProfileViewModal = ({ visible, onClose, activeRole, userId }) => {
             </Modal>
 
             <RoleEditModal
+                key={userId + isEditRoleModalVisible}
                 visible={isEditRoleModalVisible}
                 onClose={() => setIsEditRoleModalVisible(false)}
                 userData={profileData}

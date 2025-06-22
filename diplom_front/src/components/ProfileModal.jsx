@@ -110,7 +110,7 @@ const ProfileModal = ({ visible, onClose, onOpenChangePhoto, profilePhoto, onPho
                                 <Form.Item
                                     name="dateOfBirth"
                                     label="Дата рождения"
-                                    rules={[{ required: true, message: 'Пожалуйста, введите дату рождения' }]}
+                                    rules={[{ required: false, message: 'Пожалуйста, введите дату рождения' }]}
                                 >
                                     <Input placeholder="ДД.ММ.ГГГГ" />
                                 </Form.Item>
@@ -146,12 +146,14 @@ const ProfileModal = ({ visible, onClose, onOpenChangePhoto, profilePhoto, onPho
                             </Col>
                         </Row>
 
+                        <Button className="change-password-button" onClick={()=>navigate("/change-password")}>Сменить пароль</Button>
+
                         <Row gutter={16}>
                             <Col span={24}>
                                 <Form.Item
                                     name="workExperience"
                                     label="Опыт работы"
-                                    rules={[{ required: true, message: 'Пожалуйста, укажите опыт работы' }]}
+                                    rules={[{ required: false, message: 'Пожалуйста, укажите опыт работы' }]}
                                 >
                                     <TextArea rows={6} placeholder="Опишите ваш опыт работы" />
                                 </Form.Item>
