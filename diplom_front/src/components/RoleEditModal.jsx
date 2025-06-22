@@ -16,7 +16,7 @@ const RoleEditModal = ({ visible, onClose, userData, onRolesUpdated }) => {
     const [roles, setRoles] = useState({});
 
     useEffect(() => {
-        if (userData?.roles) {
+        if (visible && userData?.roles) {
             const userRolesSet = new Set(userData.roles.map(roleObj => roleObj.roleType));
             const roleState = {};
             ALL_ROLES.forEach(role => {
@@ -24,7 +24,7 @@ const RoleEditModal = ({ visible, onClose, userData, onRolesUpdated }) => {
             });
             setRoles(roleState);
         }
-    }, [userData]);
+    }, [visible, userData.roles]);
 
     const onRoleToggle = (roleKey) => {
         setRoles(prev => ({
@@ -59,7 +59,6 @@ const RoleEditModal = ({ visible, onClose, userData, onRolesUpdated }) => {
         );
 
         try {
-            console.log('Отправляемый payload:', JSON.stringify(payload, null, 2));
             await axiosClient.patch('/users/update-user-profile/', payload);
             message.success('Роли успешно обновлены');
             onRolesUpdated();
@@ -76,7 +75,7 @@ const RoleEditModal = ({ visible, onClose, userData, onRolesUpdated }) => {
             onCancel={onClose}
             onOk={handleSave}
             okText="Сохранить"
-            cancelButtonProps={{ style: { display: 'none' } }} // скрываем кнопку Cancel
+            cancelButtonProps={{ style: { display: 'none' } }}
         >
             <div className="role-container">
                 {ALL_ROLES.map((roleKey) => (

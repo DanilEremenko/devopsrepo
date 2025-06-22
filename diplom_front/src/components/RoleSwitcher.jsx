@@ -27,8 +27,8 @@ const RoleSwitcher = ({ onRoleChange }) => {
                 const userRoles = response.data.userRoles.map(role => role.roleType);
 
                 if (userRoles.length > 0) {
-                    const initialRole = userRoles[0];
                     setAvailableRoles(userRoles);
+                    const initialRole = userRoles[0];
                     setActiveRole(initialRole);
                     onRoleChange?.(initialRole);
                 }
@@ -56,7 +56,7 @@ const RoleSwitcher = ({ onRoleChange }) => {
     return (
         <div className="role-switcher">
             {rolesConfig.map(({ name, Icon, tooltip }, index) => {
-                const isDisabled = index === 0 || index === rolesConfig.length - 1;
+                const isDisabled = !availableRoles.includes(name);
                 const isActive = activeRole === name;
                 const color = isActive ? '#1890ff' : '#bfbfbf';
 

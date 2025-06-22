@@ -76,7 +76,7 @@ const Dashboard = () => {
                 <Footer className="dashboard-footer">
                     <div className="footer-container">
                         <p className="footer-text">2025 © Work Solutions</p>
-                        <p className="footer-text" href="/agreement.pdf">Политика конфиденциальности</p>
+                        <p className="footer-text" href="../public/agreement.pdf">Политика конфиденциальности</p>
                         <img src={wsLogo} alt="Logo" className="footer-logo" />
                     </div>
                 </Footer>
